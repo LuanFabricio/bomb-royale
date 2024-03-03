@@ -1,0 +1,18 @@
+#ifndef DEFINES_H_
+#define DEFINES_H_
+
+#define NULL 0
+#define BACKGROUND_COLOR 0xff222222
+#define POINT_COLOR 0xff0000ff
+#define AABB_BORDER_COLOR 0xfff0f0f0
+
+#define SCREEN_WIDTH 832
+#define SCREEN_HEIGHT 832
+
+#define HALF_WIDTH SCREEN_WIDTH / 2
+#define HALF_HEIGHT SCREEN_HEIGHT / 2
+
+#define GRID_LENGTH 13
+#define GRID_SIZE 64
+
+#endif // DEFINES_H_
