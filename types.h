@@ -22,18 +22,6 @@ typedef struct {
 	float half_dimension;
 } AABB;
 
-
-typedef struct QuadTree QuadTree;
-struct QuadTree {
-	AABB node;
-	u32 objects_size;
-	AABB objects[NODE_CAPACITY];
-	QuadTree *north_west;
-	QuadTree *north_east;
-	QuadTree *south_west;
-	QuadTree *south_east;
-};
-
 typedef enum {
 	AIR,
 	DESTRUCTIBLE,
@@ -45,8 +33,19 @@ typedef struct {
 } GameBoard;
 
 typedef struct {
-	u32 x, y;
+	AABB aabb;
 	GridType grid_type;
 } Block;
+
+typedef struct QuadTree QuadTree;
+struct QuadTree {
+	AABB node;
+	u32 objects_size;
+	Block objects[NODE_CAPACITY];
+	QuadTree *north_west;
+	QuadTree *north_east;
+	QuadTree *south_west;
+	QuadTree *south_east;
+};
 
 #endif // TYPE_H_
