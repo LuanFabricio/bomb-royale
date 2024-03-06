@@ -4,6 +4,7 @@
 #include "./platform.h"
 #include "./types.h"
 #include "./mm.h"
+#include "utils/colors.h"
 
 #define QUADTREE static
 
@@ -25,9 +26,10 @@ QUADTREE QuadTree *QuadTree_new(float x, float y, float half_dimension)
 		q_ptr->node = node;
 		q_ptr->objects_size = 0;
 		for (unsigned int i = 0; i < NODE_CAPACITY; i++) {
-			q_ptr->objects[i].center.x = 0;
-			q_ptr->objects[i].center.y = 0;
-			q_ptr->objects[i].half_dimension = 0;
+			q_ptr->objects[i].aabb.center.x = 0;
+			q_ptr->objects[i].aabb.center.y = 0;
+			q_ptr->objects[i].aabb.half_dimension = 0;
+			q_ptr->objects[i].grid_type = AIR;
 		}
 		q_ptr->north_west = NULL;
 		q_ptr->north_east = NULL;
@@ -60,9 +62,9 @@ QUADTREE void QuadTree_subdivide(QuadTree *root)
 	root->south_east = QuadTree_new(x, y, half_dimension);
 }
 
-QUADTREE boolean QuadTree_insert(QuadTree *root, AABB obj)
+QUADTREE boolean QuadTree_insert(QuadTree *root, Block obj)
 {
-	if (!AABB_contains_point(root->node, obj.center)) {
+	if (!AABB_contains_point(root->node, obj.aabb.center)) {
 		return false;
 	}
 
@@ -88,21 +90,27 @@ QUADTREE void QuadTree_display(const QuadTree *root)
 {
 	if (root == NULL) return;
 
-	AABB_display(root->node);
-
-	float half = 0;
+	float half = GRID_SIZE;
+	u32 color = 0;
+	GridType gt = AIR;
 	for (u32 i = 0; i < root->objects_size; i++) {
-		half = root->objects[i].half_dimension;
-		Platform_draw_rectangle(
-				root->objects[i].center.x - half,
-				root->objects[i].center.y - half,
-				half * 2.0, half * 2.0,	POINT_COLOR);
+		gt = root->objects[i].grid_type;
+
+		if (gt != AIR ){
+		color = Color_get_color_by_grid_type(gt);
+			Platform_draw_rectangle(
+					root->objects[i].aabb.center.x - half,
+					root->objects[i].aabb.center.y - half,
+					GRID_SIZE, GRID_SIZE,	color);
+		}
 	}
 
 	QuadTree_display(root->north_west);
 	QuadTree_display(root->north_east);
 	QuadTree_display(root->south_west);
 	QuadTree_display(root->south_east);
+
+	// AABB_display(root->node);
 }
 
 #endif // QUADTREE_H_
