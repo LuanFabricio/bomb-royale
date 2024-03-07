@@ -4,18 +4,24 @@
 #include "./platform.h"
 #include "types.h"
 #include "utils/levels.h"
+#include "levels/level.h"
+#include <stdio.h>
 
 int main()
 {
 	QuadTree *root = QuadTree_new((float)HALF_WIDTH, (float)HALF_HEIGHT, (float)HALF_WIDTH);
 
 	u32 blocks_size = 0;
-	Block grid[GRID_LENGTH*GRID_LENGTH] = {0};
-	load_grid_by_bin("./levels/level.bin", grid, &blocks_size);
+	// Block grid[GRID_LENGTH*GRID_LENGTH] = level_bytes;
+	Block *grid = (Block*)level_bytes;
+	// load_grid_by_bin("./levels/level.bin", grid, &blocks_size);
 
-	for (u64 i = 0; i < blocks_size; i++) {
+	printf("Size: %u\n", size);
+	for (u64 i = 0; i < size ; i++) {
+		printf("[%llu] {%.2f %.2f} %.2f %u\n", i, grid[i].aabb.center.x, grid[i].aabb.center.y, grid[i].aabb.half_dimension, grid[i].grid_type);
 		QuadTree_insert(root, grid[i]);
 	}
+
 
 	// QuadTree_insert(root, (Block) { .aabb = { .center = { 400.0, 300.0, }, .half_dimension = 42.0f }, .grid_type = AIR } );
 	// QuadTree_insert(root, (Block) { .aabb = { .center = { 200.0, 300.0, }, .half_dimension = 42.0f }, .grid_type = DESTRUCTIBLE } );
