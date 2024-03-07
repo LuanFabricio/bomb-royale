@@ -21,12 +21,14 @@ LEVELS void save_grid_as_header(const char* filepath, const u8 *grid, const u32 
 {
 	FILE *file = fopen(filepath, "w");
 
-	fprintf(file, "const unsigned char bytes[] = { ");
-	for (size_t i = 0; i < blocks_size; i++) {
-		fprintf(file, "0x%u,", grid[i]);
+	fprintf(file, "#ifndef LEVEL_H_\n#define LEVEL_H_\n");
+	fprintf(file, "static unsigned char level_bytes[] = { ");
+	for (size_t i = 0; i < sizeof(Block)*blocks_size; i++) {
+		fprintf(file, "0x%x,", grid[i]);
 	}
 	fprintf(file, "};\n");
-	fprintf(file, "const unsigned int size = %u;\n", blocks_size);
+	fprintf(file, "static unsigned int size = %u;\n", blocks_size);
+	fprintf(file, "#endif // LEVEL_H_");
 
 	fclose(file);
 }
