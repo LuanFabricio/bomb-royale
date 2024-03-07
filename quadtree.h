@@ -26,9 +26,8 @@ QUADTREE QuadTree *QuadTree_new(float x, float y, float half_dimension)
 		q_ptr->node = node;
 		q_ptr->objects_size = 0;
 		for (unsigned int i = 0; i < NODE_CAPACITY; i++) {
-			q_ptr->objects[i].aabb.center.x = 0;
-			q_ptr->objects[i].aabb.center.y = 0;
-			q_ptr->objects[i].aabb.half_dimension = 0;
+			q_ptr->objects[i].center.x = 0;
+			q_ptr->objects[i].center.y = 0;
 			q_ptr->objects[i].grid_type = AIR;
 		}
 		q_ptr->north_west = NULL;
@@ -64,7 +63,7 @@ QUADTREE void QuadTree_subdivide(QuadTree *root)
 
 QUADTREE boolean QuadTree_insert(QuadTree *root, Block obj)
 {
-	if (!AABB_contains_point(root->node, obj.aabb.center)) {
+	if (!AABB_contains_point(root->node, obj.center)) {
 		return false;
 	}
 
@@ -99,8 +98,8 @@ QUADTREE void QuadTree_display(const QuadTree *root)
 		if (gt != AIR ){
 		color = Color_get_color_by_grid_type(gt);
 			Platform_draw_rectangle(
-					root->objects[i].aabb.center.x - half,
-					root->objects[i].aabb.center.y - half,
+					root->objects[i].center.x - half,
+					root->objects[i].center.y - half,
 					GRID_SIZE, GRID_SIZE,	color);
 		}
 	}

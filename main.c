@@ -18,7 +18,7 @@ int main()
 
 	printf("Size: %u\n", size);
 	for (u64 i = 0; i < size ; i++) {
-		printf("[%llu] {%.2f %.2f} %.2f %u\n", i, grid[i].aabb.center.x, grid[i].aabb.center.y, grid[i].aabb.half_dimension, grid[i].grid_type);
+		printf("[%llu] {%.2f %.2f} %.2f %u\n", i, grid[i].center.x, grid[i].center.y, GRID_SIZE/2.0, grid[i].grid_type);
 		QuadTree_insert(root, grid[i]);
 	}
 

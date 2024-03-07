@@ -60,9 +60,8 @@ int main()
 			u32 mouse_x = (u32)mouse_pos.x / GRID_SIZE;
 			u32 mouse_y = (u32)mouse_pos.y / GRID_SIZE;
 
-			blocks[blocks_size].aabb.center.x = mouse_x * GRID_SIZE;
-			blocks[blocks_size].aabb.center.y = mouse_y * GRID_SIZE;
-			blocks[blocks_size].aabb.half_dimension = GRID_SIZE;
+			blocks[blocks_size].center.x = mouse_x * GRID_SIZE;
+			blocks[blocks_size].center.y = mouse_y * GRID_SIZE;
 			blocks[blocks_size++].grid_type = current_type;
 		}
 
@@ -72,8 +71,8 @@ int main()
 			for (u32 i = 0; i < blocks_size; i++) {
 				Color c = get_color_by_grid_type(blocks[i].grid_type);
 				DrawRectangle(
-						blocks[i].aabb.center.x,
-						blocks[i].aabb.center.y,
+						blocks[i].center.x,
+						blocks[i].center.y,
 						GRID_SIZE, GRID_SIZE, c);
 			}
 			draw_grid();

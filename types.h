@@ -33,7 +33,7 @@ typedef struct {
 } GameBoard;
 
 typedef struct {
-	AABB aabb;
+	Point center;
 	GridType grid_type;
 } Block;
 
