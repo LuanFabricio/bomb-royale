@@ -89,7 +89,6 @@ QUADTREE void QuadTree_display(const QuadTree *root)
 {
 	if (root == NULL) return;
 
-	float half = GRID_SIZE;
 	u32 color = 0;
 	GridType gt = AIR;
 	for (u32 i = 0; i < root->objects_size; i++) {
@@ -98,8 +97,8 @@ QUADTREE void QuadTree_display(const QuadTree *root)
 		if (gt != AIR ){
 		color = Color_get_color_by_grid_type(gt);
 			Platform_draw_rectangle(
-					root->objects[i].center.x - half,
-					root->objects[i].center.y - half,
+					root->objects[i].center.x - (float)GRID_SIZE,
+					root->objects[i].center.y - (float)GRID_SIZE,
 					GRID_SIZE, GRID_SIZE,	color);
 		}
 	}
