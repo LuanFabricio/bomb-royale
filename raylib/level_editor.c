@@ -29,6 +29,17 @@ Color get_color_by_grid_type(GridType gt)
 	// return colors[gt % 3];
 }
 
+void remove_block_by_point(Point p, Block *blocks, u32 *block_size)
+{
+	for (u32 i = 0; i < *block_size; i++) {
+		if (p.x == blocks[i].center.x && p.y == blocks[i].center.y) {
+			*block_size -= 1;
+			blocks[i] = blocks[*block_size];
+			return;
+		}
+	}
+}
+
 #define LEVEL_BASE_PATH "./levels/"
 
 int main()
@@ -60,9 +71,17 @@ int main()
 			u32 mouse_x = (u32)mouse_pos.x / GRID_SIZE;
 			u32 mouse_y = (u32)mouse_pos.y / GRID_SIZE;
 
-			blocks[blocks_size].center.x = mouse_x * GRID_SIZE;
-			blocks[blocks_size].center.y = mouse_y * GRID_SIZE;
-			blocks[blocks_size++].grid_type = current_type;
+			if (current_type != AIR) {
+				blocks[blocks_size].center.x = mouse_x * GRID_SIZE;
+				blocks[blocks_size].center.y = mouse_y * GRID_SIZE;
+				blocks[blocks_size++].grid_type = current_type;
+			} else {
+				Point p = {0};
+				p.x = mouse_x * GRID_SIZE;
+				p.y = mouse_y * GRID_SIZE;
+
+				remove_block_by_point(p, blocks, &blocks_size);
+			}
 		}
 
 		BeginDrawing();
