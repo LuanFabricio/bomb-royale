@@ -48,4 +48,18 @@ struct QuadTree {
 	QuadTree *south_east;
 };
 
+typedef struct {
+	Point center;
+	u8 id;
+} Player;
+
+// TODO: Abstract for linux and web
+// HACK: Using Raylib key implementation
+typedef enum {
+	KEY_W = 'W',
+	KEY_A = 'A',
+	KEY_D = 'D',
+	KEY_S = 'S',
+} KeysKeyboard;
+
 #endif // TYPE_H_
