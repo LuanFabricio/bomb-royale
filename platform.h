@@ -20,7 +20,8 @@ extern void Platform_draw_rectangle_lines(float x, float y, float w, float h, u3
 
 // ========================== Input section  =========================
 
-extern boolean Platform_is_key_pressed(u8 key);
+extern boolean Platform_is_key_pressed(u32 key);
+extern boolean Platform_is_key_down(u32 key);
 
 // ========================== Random section =========================
 
@@ -29,6 +30,7 @@ extern float Platform_rand_float_range(float min, float max);
 
 // ======================== Game loop section ========================
 
+extern float Platform_get_frame_time();
 extern void Platform_set_loop(void* loop_fn);
 
 #endif // PLATFORM_H_
