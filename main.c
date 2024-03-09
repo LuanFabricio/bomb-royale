@@ -51,7 +51,12 @@ int main()
 			players[my_id_idx].center.y += 750 * Platform_get_frame_time();
 		}
 
-		printf("Player: %.2f %.2f\n", players[my_id_idx].center.x, players[my_id_idx].center.y);
+		Block *collision = NULL;
+
+		if ((collision = QuadTree_check_collision(root, (AABB) { .center = players[my_id_idx].center, .half_dimension = GRID_SIZE }))) {
+			printf("Collision: %.2f %.2f\n", collision->center.x, collision->center.y);
+		}
+		printf("Collision: %p\n", collision);
 
 		Platform_begin_drawing();
 			Platform_clear_background(0xfffbfbfb);
