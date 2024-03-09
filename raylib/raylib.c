@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <time.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -11,6 +12,7 @@
 void Platform_init_window(const char *title, uint32_t w, uint32_t h)
 {
 	InitWindow(w, h, title);
+	SetTargetFPS(60);
 }
 
 bool Platform_window_should_close()
@@ -41,6 +43,22 @@ void Platform_draw_rectangle(float x, float y, float w, float h, uint32_t color)
 void Platform_draw_rectangle_lines(float x, float y, float w, float h, uint32_t color)
 {
 	DrawRectangleLines(x, y, w, h, U32_TO_COLOR(color));
+}
+
+bool Platform_is_key_pressed(uint32_t key)
+{
+	return IsKeyPressed(key);
+}
+
+bool Platform_is_key_down(uint32_t key)
+{
+	bool is_key_down = IsKeyDown(key);
+	return is_key_down;
+}
+
+float Platform_get_frame_time()
+{
+	return GetFrameTime();
 }
 
 void Platform_close_window()
