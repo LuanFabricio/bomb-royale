@@ -33,4 +33,8 @@ extern float Platform_rand_float_range(float min, float max);
 extern float Platform_get_frame_time();
 extern void Platform_set_loop(void* loop_fn);
 
+// ========================== Math section ===========================
+
+extern float Platform_sqrtf(float x);
+
 #endif // PLATFORM_H_
