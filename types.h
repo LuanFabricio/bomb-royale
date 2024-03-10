@@ -62,4 +62,8 @@ typedef enum {
 	KEY_S = 'S',
 } KeysKeyboard;
 
+typedef struct {
+	float x, y;
+} Vector2;
+
 #endif // TYPE_H_
