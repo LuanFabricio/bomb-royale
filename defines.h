@@ -15,4 +15,6 @@
 #define GRID_LENGTH 13
 #define GRID_SIZE 64
 
+#define PLAYER_SPEED 550
+
 #endif // DEFINES_H_
