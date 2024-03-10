@@ -4,6 +4,7 @@
 #include "./platform.h"
 #include "types.h"
 #include "levels/level.h"
+#include "utils/vector.h"
 #include <stdio.h>
 
 int main()
@@ -33,30 +34,45 @@ int main()
 		}
 	}
 
+	Vector2 speed = {0};
+
 	mm_log();
 
 	Platform_init_window("Bomb royale", SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	while (!Platform_window_should_close()) {
 		if (Platform_is_key_down(KEY_D)) {
-			players[my_id_idx].center.x += 750 * Platform_get_frame_time();
+			speed.x = 1;
+		} else if (Platform_is_key_down(KEY_A)) {
+			speed.x = -1;
+		} else {
+			speed.x = 0;
 		}
-		if (Platform_is_key_down(KEY_A)) {
-			players[my_id_idx].center.x -= 750 * Platform_get_frame_time();
-		}
+
 		if (Platform_is_key_down(KEY_W)) {
-			players[my_id_idx].center.y -= 750 * Platform_get_frame_time();
+			speed.y = -1;
+		} else if (Platform_is_key_down(KEY_S)) {
+			speed.y = 1;
+		} else {
+			speed.y = 0;
 		}
-		if (Platform_is_key_down(KEY_S)) {
-			players[my_id_idx].center.y += 750 * Platform_get_frame_time();
-		}
+
+		printf("Speed: %.2f %.2f\n", speed.x, speed.y);
+		speed = Vector2_normalize(speed);
+		printf("Speed: %.2f %.2f\n", speed.x, speed.y);
+		speed = Vector2_scale(speed, PLAYER_SPEED * Platform_get_frame_time());
+		printf("Speed: %.2f %.2f\n", speed.x, speed.y);
+
+		players[my_id_idx].center = Vector2_add_point(speed, players[my_id_idx].center);
+
+		printf("Player: %.2f %.2f\n", players[my_id_idx].center.x, players[my_id_idx].center.y);
 
 		Block *collision = NULL;
 
 		if ((collision = QuadTree_check_collision(root, (AABB) { .center = players[my_id_idx].center, .half_dimension = GRID_SIZE }))) {
+			printf("Collision: %p\n", collision);
 			printf("Collision: %.2f %.2f\n", collision->center.x, collision->center.y);
 		}
-		printf("Collision: %p\n", collision);
 
 		Platform_begin_drawing();
 			Platform_clear_background(0xfffbfbfb);
