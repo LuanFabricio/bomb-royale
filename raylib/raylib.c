@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <limits.h>
+#include <math.h>
 
 #include "raylib.h"
 
@@ -75,4 +76,9 @@ float Platform_rand_float_range(float min, float max)
 {
 	float r = (float)rand() / (float)INT_MAX;
 	return min + r * (max - min);
+}
+
+float Platform_sqrtf(float x)
+{
+	return sqrtf(x);
 }
