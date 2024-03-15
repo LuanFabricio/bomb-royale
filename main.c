@@ -57,22 +57,40 @@ int main()
 			speed.y = 0;
 		}
 
-		printf("Speed: %.2f %.2f\n", speed.x, speed.y);
-		speed = Vector2_normalize(speed);
-		printf("Speed: %.2f %.2f\n", speed.x, speed.y);
-		speed = Vector2_scale(speed, PLAYER_SPEED * Platform_get_frame_time());
-		printf("Speed: %.2f %.2f\n", speed.x, speed.y);
-
-		players[my_id_idx].center = Vector2_add_point(speed, players[my_id_idx].center);
-
-		printf("Player: %.2f %.2f\n", players[my_id_idx].center.x, players[my_id_idx].center.y);
+		speed = Vector2_scale(Vector2_normalize(speed), PLAYER_SPEED * Platform_get_frame_time());
+		// players[my_id_idx].center = Vector2_add_point(speed, players[my_id_idx].center);
+		players[my_id_idx].center.x += speed.x;
+		AABB player_aabb = {
+			.center = players[my_id_idx].center,
+			.half_dimension = GRID_SIZE - 1,
+		};
 
 		Block *collision = NULL;
+		if ((collision = QuadTree_check_collision(root, player_aabb))) {
+			// printf("Collision: %p\n", collision);
+			// printf("Collision: %.2f %.2f\n", collision->center.x, collision->center.y);
 
-		if ((collision = QuadTree_check_collision(root, (AABB) { .center = players[my_id_idx].center, .half_dimension = GRID_SIZE }))) {
-			printf("Collision: %p\n", collision);
-			printf("Collision: %.2f %.2f\n", collision->center.x, collision->center.y);
+			if (speed.x > 0) {
+				players[my_id_idx].center.x = collision->center.x - GRID_SIZE;
+			} else if (speed.x < 0) {
+				players[my_id_idx].center.x = collision->center.x + GRID_SIZE;
+			}
 		}
+
+		players[my_id_idx].center.y += speed.y;
+		player_aabb.center = players[my_id_idx].center;
+		collision = NULL;
+		if ((collision = QuadTree_check_collision(root, player_aabb))) {
+			// printf("Collision: %p\n", collision);
+			// printf("Collision: %.2f %.2f\n", collision->center.x, collision->center.y);
+
+			if (speed.y > 0) {
+				players[my_id_idx].center.y = collision->center.y - GRID_SIZE;
+			} else if (speed.y < 0) {
+				players[my_id_idx].center.y = collision->center.y + GRID_SIZE;
+			}
+		}
+
 
 		Platform_begin_drawing();
 			Platform_clear_background(0xfffbfbfb);
