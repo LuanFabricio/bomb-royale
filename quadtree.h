@@ -85,7 +85,7 @@ QUADTREE boolean QuadTree_insert(QuadTree *root, Block obj)
 	return false;
 }
 
-QUADTREE Block* QuadTree_check_collision(QuadTree *root, AABB aabb)
+QUADTREE Block* QuadTree_check_collision(const QuadTree *root, AABB aabb)
 {
 	if (!AABB_intersects(root->node, aabb)) {
 		return NULL;
@@ -93,7 +93,7 @@ QUADTREE Block* QuadTree_check_collision(QuadTree *root, AABB aabb)
 
 	for (u8 i = 0; i < root->objects_size; i++) {
 		if (AABB_contains_point(aabb, root->objects[i].center)) {
-			return &root->objects[i];
+			return (Block*)&root->objects[i];
 		}
 	}
 
@@ -125,7 +125,7 @@ QUADTREE void QuadTree_display(const QuadTree *root)
 			Platform_draw_rectangle(
 					root->objects[i].center.x - (float)GRID_SIZE,
 					root->objects[i].center.y - (float)GRID_SIZE,
-					GRID_SIZE, GRID_SIZE,	color);
+					GRID_SIZE, GRID_SIZE, color);
 		}
 	}
 
