@@ -4,8 +4,8 @@
 #include "./platform.h"
 #include "types.h"
 #include "levels/level.h"
+#include "utils/collision_handler.h"
 #include "utils/vector.h"
-#include <stdio.h>
 
 int main()
 {
@@ -58,45 +58,13 @@ int main()
 		}
 
 		speed = Vector2_scale(Vector2_normalize(speed), PLAYER_SPEED * Platform_get_frame_time());
-		// players[my_id_idx].center = Vector2_add_point(speed, players[my_id_idx].center);
-		players[my_id_idx].center.x += speed.x;
-		AABB player_aabb = {
-			.center = players[my_id_idx].center,
-			.half_dimension = GRID_SIZE - 1,
-		};
-
-		Block *collision = NULL;
-		if ((collision = QuadTree_check_collision(root, player_aabb))) {
-			// printf("Collision: %p\n", collision);
-			// printf("Collision: %.2f %.2f\n", collision->center.x, collision->center.y);
-
-			if (speed.x > 0) {
-				players[my_id_idx].center.x = collision->center.x - GRID_SIZE;
-			} else if (speed.x < 0) {
-				players[my_id_idx].center.x = collision->center.x + GRID_SIZE;
-			}
-		}
-
-		players[my_id_idx].center.y += speed.y;
-		player_aabb.center = players[my_id_idx].center;
-		collision = NULL;
-		if ((collision = QuadTree_check_collision(root, player_aabb))) {
-			// printf("Collision: %p\n", collision);
-			// printf("Collision: %.2f %.2f\n", collision->center.x, collision->center.y);
-
-			if (speed.y > 0) {
-				players[my_id_idx].center.y = collision->center.y - GRID_SIZE;
-			} else if (speed.y < 0) {
-				players[my_id_idx].center.y = collision->center.y + GRID_SIZE;
-			}
-		}
-
+		players[my_id_idx].center = HandleCollision_player_collision(root, players, players_len, my_id_idx, speed);
 
 		Platform_begin_drawing();
 			Platform_clear_background(0xfffbfbfb);
 			QuadTree_display(root);
 
-			for (u32 i = 0; i < 3; i++) {
+			for (u32 i = 0; i < players_len; i++) {
 				Platform_draw_rectangle(
 						players[i].center.x-(float)GRID_SIZE,
 						players[i].center.y-(float)GRID_SIZE,
