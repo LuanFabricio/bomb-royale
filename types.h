@@ -56,14 +56,16 @@ typedef struct {
 // TODO: Abstract for linux and web
 // HACK: Using Raylib key implementation
 typedef enum {
-	KEY_W = 'W',
-	KEY_A = 'A',
-	KEY_D = 'D',
-	KEY_S = 'S',
+	BR_KEY_W = 'W',
+	BR_KEY_A = 'A',
+	BR_KEY_D = 'D',
+	BR_KEY_S = 'S',
 } KeysKeyboard;
 
+#ifndef RAYLIB_H
 typedef struct {
 	float x, y;
 } Vector2;
+#endif // RAYLIB_H
 
 #endif // TYPE_H_
