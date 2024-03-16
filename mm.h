@@ -4,7 +4,7 @@
 #include "./defines.h"
 #include "./types.h"
 
-#define MEMORY_SIZE 4096
+#define MEMORY_SIZE 1024 * 16
 
 static u8 memory[MEMORY_SIZE] = {0};
 static u32 memory_ptr = 0;
