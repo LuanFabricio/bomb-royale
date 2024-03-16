@@ -137,4 +137,18 @@ QUADTREE void QuadTree_display(const QuadTree *root)
 	// AABB_display(root->node);
 }
 
+QUADTREE u64 QuadTree_get_len(const QuadTree *root)
+{
+	u64 len = root->objects_size;
+
+	if (root->north_west) {
+		len += QuadTree_get_len(root->north_west) + 1;
+		len += QuadTree_get_len(root->north_east) + 1;
+		len += QuadTree_get_len(root->south_west) + 1;
+		len += QuadTree_get_len(root->south_east) + 1;
+	}
+
+	return len;
+}
+
 #endif // QUADTREE_H_
