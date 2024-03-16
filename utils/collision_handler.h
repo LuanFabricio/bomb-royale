@@ -123,7 +123,6 @@ static Point HandleCollision_player_collision(const QuadTree* root, const Player
 	_HandleCollision_obj_collider(root, &player_aabb, speed, Y);
 	_HandleCollision_player_collider(players, players_len, player_idx, &player_aabb, speed, Y);
 
-
 	return player_aabb.center;
 }
 
