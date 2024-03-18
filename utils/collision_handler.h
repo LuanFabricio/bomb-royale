@@ -3,6 +3,7 @@
 
 #include "../types.h"
 #include "../quadtree.h"
+#include "utils.h"
 
 typedef enum { X, Y } Axis;
 
@@ -123,6 +124,11 @@ static Point HandleCollision_player_collision(const QuadTree* root, const Player
 	_HandleCollision_obj_collider(root, &player_aabb, speed, Y);
 	_HandleCollision_player_collider(players, players_len, player_idx, &player_aabb, speed, Y);
 
+	player_aabb.center.x = maxf(player_aabb.center.x, GRID_SIZE);
+	player_aabb.center.x = minf(player_aabb.center.x, SCREEN_WIDTH - GRID_SIZE);
+
+	player_aabb.center.y = maxf(player_aabb.center.y, GRID_SIZE);
+	player_aabb.center.y = minf(player_aabb.center.y, SCREEN_HEIGHT);
 	return player_aabb.center;
 }
 
