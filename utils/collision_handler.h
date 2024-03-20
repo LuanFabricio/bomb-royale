@@ -112,7 +112,7 @@ static Point HandleCollision_player_collision(const QuadTree* root, const Player
 {
 	AABB player_aabb = {
 		.center = players[player_idx].center,
-		.half_dimension = GRID_SIZE - 1,
+		.half_dimension = GRID_SIZE - 2,
 	};
 
 	player_aabb.center.x += speed.x;
@@ -125,7 +125,7 @@ static Point HandleCollision_player_collision(const QuadTree* root, const Player
 	_HandleCollision_player_collider(players, players_len, player_idx, &player_aabb, speed, Y);
 
 	player_aabb.center.x = maxf(player_aabb.center.x, GRID_SIZE);
-	player_aabb.center.x = minf(player_aabb.center.x, SCREEN_WIDTH - GRID_SIZE);
+	player_aabb.center.x = minf(player_aabb.center.x, SCREEN_WIDTH);
 
 	player_aabb.center.y = maxf(player_aabb.center.y, GRID_SIZE);
 	player_aabb.center.y = minf(player_aabb.center.y, SCREEN_HEIGHT);
