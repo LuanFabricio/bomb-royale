@@ -3,7 +3,7 @@
 
 #include "../types.h"
 #include "../quadtree.h"
-#include "utils.h"
+#include "./math.h"
 
 typedef enum { X, Y } Axis;
 
