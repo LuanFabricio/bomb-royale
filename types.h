@@ -53,6 +53,15 @@ typedef struct {
 	u8 id;
 } Player;
 
+typedef struct {
+	Point center;
+	u8 size, tick_to_explode;
+} EphemeralItem;
+
+typedef struct {
+	EphemeralItem bomb_item;
+} Bomb;
+
 // TODO: Abstract for linux and web
 // HACK: Using Raylib key implementation
 typedef enum {
@@ -60,6 +69,7 @@ typedef enum {
 	BR_KEY_A = 'A',
 	BR_KEY_D = 'D',
 	BR_KEY_S = 'S',
+	BR_KEY_SPACE = ' ',
 } KeysKeyboard;
 
 #ifndef RAYLIB_H
