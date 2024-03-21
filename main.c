@@ -42,6 +42,10 @@ int main()
 
 	Vector2 speed = {0};
 
+	Bomb bomb_arr[GRID_LENGTH * GRID_LENGTH] = {0};
+	u8 bomb_size = 0;
+	// TODO: Create a fire buffer
+
 	mm_log();
 
 	printf("QuadTree len: %llu\n", QuadTree_get_len(root));
@@ -49,6 +53,14 @@ int main()
 	Platform_init_window("Bomb royale", SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	while (!Platform_window_should_close()) {
+		for (u32 i = 0; i < bomb_size; i++) {
+			if (bomb_arr[i].bomb_item.tick_to_explode > 0) bomb_arr[i].bomb_item.tick_to_explode -= 1;
+			else {
+				bomb_size--;
+				bomb_arr[i] = bomb_arr[bomb_size];
+			}
+		}
+
 		if (Platform_is_key_down(BR_KEY_D)) {
 			speed.x = 1;
 		} else if (Platform_is_key_down(BR_KEY_A)) {
@@ -65,6 +77,21 @@ int main()
 			speed.y = 0;
 		}
 
+		if (Platform_is_key_down(BR_KEY_SPACE)) {
+			bomb_arr[bomb_size] = (Bomb) {
+				.bomb_item = {
+					.center = players[my_id_idx].center,
+					.size = 3,
+					.tick_to_explode = TICKS_TO_EXPLODE
+				}
+			};
+			bomb_arr[bomb_size].bomb_item.center.x -= (float)GRID_SIZE;
+			bomb_arr[bomb_size].bomb_item.center.x = ((int)bomb_arr[bomb_size].bomb_item.center.x / GRID_SIZE) * GRID_SIZE;
+			bomb_arr[bomb_size].bomb_item.center.y -= (float)GRID_SIZE;
+			bomb_arr[bomb_size].bomb_item.center.y = ((int)bomb_arr[bomb_size].bomb_item.center.y / GRID_SIZE) * GRID_SIZE;
+			bomb_size++;
+		}
+
 		speed = Vector2_scale(Vector2_normalize(speed), PLAYER_SPEED * Platform_get_frame_time());
 		players[my_id_idx].center = HandleCollision_player_collision(root, players, players_len, my_id_idx, speed);
 
@@ -77,6 +104,14 @@ int main()
 						players[i].center.x-(float)GRID_SIZE,
 						players[i].center.y-(float)GRID_SIZE,
 						GRID_SIZE, GRID_SIZE, 0xff919191);
+			}
+
+			for (u8 i = 0; i < bomb_size; i++) {
+				Platform_draw_rectangle(
+						bomb_arr[i].bomb_item.center.x,
+						bomb_arr[i].bomb_item.center.y,
+						GRID_SIZE, GRID_SIZE,
+						0xff151515);
 			}
 		Platform_end_drawing();
 	}
