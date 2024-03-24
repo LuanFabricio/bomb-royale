@@ -92,7 +92,8 @@ QUADTREE Block* QuadTree_check_collision(const QuadTree *root, AABB aabb)
 	}
 
 	for (u8 i = 0; i < root->objects_size; i++) {
-		if (AABB_contains_point(aabb, root->objects[i].center)) {
+		if (AABB_contains_point(aabb, root->objects[i].center)
+			&& root->objects[i].grid_type != AIR) {
 			return (Block*)&root->objects[i];
 		}
 	}
