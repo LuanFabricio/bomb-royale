@@ -44,7 +44,9 @@ int main()
 
 	Bomb bomb_arr[GRID_LENGTH * GRID_LENGTH] = {0};
 	u8 bomb_size = 0;
-	// TODO: Create a fire buffer
+
+	Fire fire_arr[GRID_LENGTH * GRID_LENGTH] = {0};
+	u8 fire_size = 0;
 
 	mm_log();
 
@@ -56,8 +58,53 @@ int main()
 		for (u32 i = 0; i < bomb_size; i++) {
 			if (bomb_arr[i].bomb_item.tick_to_explode > 0) bomb_arr[i].bomb_item.tick_to_explode -= 1;
 			else {
+				AABB fire_aabb = {
+					.center = bomb_arr[i].bomb_item.center,
+					.half_dimension = GRID_SIZE - 2,
+				};
+				fire_aabb.center.x += GRID_SIZE;
+				fire_aabb.center.y += GRID_SIZE;
+
+				Point fire_centers[] = {
+					fire_aabb.center,
+					fire_aabb.center,
+					fire_aabb.center,
+					fire_aabb.center,
+				};
+
+				fire_centers[0].x -= GRID_SIZE;
+				fire_centers[1].x += GRID_SIZE;
+				fire_centers[2].y -= GRID_SIZE;
+				fire_centers[3].y += GRID_SIZE;
+
+				printf("Bomb %i spawning fire...\n", i);
+				Block *collision_block = NULL;
+				for (u8 j = 0; j < 4; j++) {
+					fire_aabb.center = fire_centers[j];
+					if ((collision_block = QuadTree_check_collision(root, fire_aabb)) != NULL && collision_block->grid_type != AIR) {
+						printf("Collides with %i\n", collision_block->grid_type);
+						printf("\t%.2f %.2f\n", collision_block->center.x, collision_block->center.y);
+						if (collision_block->grid_type == DESTRUCTIBLE) {
+							collision_block->grid_type = AIR;
+						}
+					} else {
+						fire_arr[fire_size].fire_item.center = fire_aabb.center;
+						fire_arr[fire_size++].fire_item.tick_to_explode = FIRE_NORMAL_TICKS;
+						printf("Adding fire!\n");
+					}
+				}
+
 				bomb_size--;
 				bomb_arr[i] = bomb_arr[bomb_size];
+				--i;
+			}
+		}
+
+		for (u8 i = 0; i < fire_size; i++) {
+			if (fire_arr[i].fire_item.tick_to_explode > 0) fire_arr[i].fire_item.tick_to_explode -= 1;
+			else {
+				fire_size--;
+				fire_arr[i] = fire_arr[fire_size];
 			}
 		}
 
@@ -78,11 +125,12 @@ int main()
 		}
 
 		if (Platform_is_key_down(BR_KEY_SPACE)) {
+			// FIX: Use bomb center properly
 			bomb_arr[bomb_size] = (Bomb) {
 				.bomb_item = {
 					.center = players[my_id_idx].center,
 					.size = 3,
-					.tick_to_explode = TICKS_TO_EXPLODE
+					.tick_to_explode = BOMB_NORMAL_TICKS
 				}
 			};
 			bomb_arr[bomb_size].bomb_item.center.x -= (float)GRID_SIZE;
@@ -112,6 +160,14 @@ int main()
 						bomb_arr[i].bomb_item.center.y,
 						GRID_SIZE, GRID_SIZE,
 						0xff151515);
+			}
+
+			for (u8 i = 0; i < fire_size; i++) {
+				Platform_draw_rectangle(
+						fire_arr[i].fire_item.center.x-(float)GRID_SIZE,
+						fire_arr[i].fire_item.center.y-(float)GRID_SIZE,
+						GRID_SIZE, GRID_SIZE,
+						0xff0000ff);
 			}
 		Platform_end_drawing();
 	}
