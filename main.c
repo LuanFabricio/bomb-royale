@@ -62,8 +62,6 @@ int main()
 					.center = bomb_arr[i].bomb_item.center,
 					.half_dimension = GRID_SIZE - 2,
 				};
-				fire_aabb.center.x += GRID_SIZE;
-				fire_aabb.center.y += GRID_SIZE;
 
 				Point fire_centers[] = {
 					fire_aabb.center,
@@ -125,7 +123,6 @@ int main()
 		}
 
 		if (Platform_is_key_down(BR_KEY_SPACE)) {
-			// FIX: Use bomb center properly
 			bomb_arr[bomb_size] = (Bomb) {
 				.bomb_item = {
 					.center = players[my_id_idx].center,
@@ -133,10 +130,8 @@ int main()
 					.tick_to_explode = BOMB_NORMAL_TICKS
 				}
 			};
-			bomb_arr[bomb_size].bomb_item.center.x -= (float)GRID_SIZE;
-			bomb_arr[bomb_size].bomb_item.center.x = ((int)bomb_arr[bomb_size].bomb_item.center.x / GRID_SIZE) * GRID_SIZE;
-			bomb_arr[bomb_size].bomb_item.center.y -= (float)GRID_SIZE;
-			bomb_arr[bomb_size].bomb_item.center.y = ((int)bomb_arr[bomb_size].bomb_item.center.y / GRID_SIZE) * GRID_SIZE;
+			bomb_arr[bomb_size].bomb_item.center.x = ((int)players[my_id_idx].center.x / GRID_SIZE) * GRID_SIZE;
+			bomb_arr[bomb_size].bomb_item.center.y = ((int)players[my_id_idx].center.y / GRID_SIZE) * GRID_SIZE;
 			bomb_size++;
 		}
 
@@ -156,8 +151,8 @@ int main()
 
 			for (u8 i = 0; i < bomb_size; i++) {
 				Platform_draw_rectangle(
-						bomb_arr[i].bomb_item.center.x,
-						bomb_arr[i].bomb_item.center.y,
+						bomb_arr[i].bomb_item.center.x-(float)GRID_SIZE,
+						bomb_arr[i].bomb_item.center.y-(float)GRID_SIZE,
 						GRID_SIZE, GRID_SIZE,
 						0xff151515);
 			}
