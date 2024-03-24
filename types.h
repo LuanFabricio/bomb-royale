@@ -62,6 +62,10 @@ typedef struct {
 	EphemeralItem bomb_item;
 } Bomb;
 
+typedef struct {
+	EphemeralItem fire_item;
+} Fire;
+
 // TODO: Abstract for linux and web
 // HACK: Using Raylib key implementation
 typedef enum {
