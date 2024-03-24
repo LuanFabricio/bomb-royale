@@ -17,6 +17,7 @@
 
 #define PLAYER_SPEED 550
 
-#define TICKS_TO_EXPLODE 25
+#define BOMB_NORMAL_TICKS 25
+#define FIRE_NORMAL_TICKS 35
 
 #endif // DEFINES_H_
