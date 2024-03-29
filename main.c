@@ -44,6 +44,7 @@ int main()
 
 	Bomb bomb_arr[GRID_LENGTH * GRID_LENGTH] = {0};
 	u8 bomb_size = 0;
+	u8 bomb_delay = 0;
 
 	Fire fire_arr[GRID_LENGTH * GRID_LENGTH] = {0};
 	u8 fire_size = 0;
@@ -122,7 +123,7 @@ int main()
 			speed.y = 0;
 		}
 
-		if (Platform_is_key_down(BR_KEY_SPACE)) {
+		if (bomb_delay == 0 && Platform_is_key_down(BR_KEY_SPACE)) {
 			bomb_arr[bomb_size] = (Bomb) {
 				.bomb_item = {
 					.center = players[my_id_idx].center,
@@ -133,6 +134,9 @@ int main()
 			bomb_arr[bomb_size].bomb_item.center.x = ((int)players[my_id_idx].center.x / GRID_SIZE) * GRID_SIZE;
 			bomb_arr[bomb_size].bomb_item.center.y = ((int)players[my_id_idx].center.y / GRID_SIZE) * GRID_SIZE;
 			bomb_size++;
+			bomb_delay = BOMB_DELAY_TICK;
+		} else if (bomb_delay > 0) {
+			bomb_delay--;
 		}
 
 		speed = Vector2_scale(Vector2_normalize(speed), PLAYER_SPEED * Platform_get_frame_time());
