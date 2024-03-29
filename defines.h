@@ -17,6 +17,8 @@
 
 #define PLAYER_SPEED 550
 
+#define BOMB_DELAY_TICK 120
+
 #define BOMB_NORMAL_TICKS 25
 #define FIRE_NORMAL_TICKS 35
 
