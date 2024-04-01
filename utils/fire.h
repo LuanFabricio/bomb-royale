@@ -29,13 +29,14 @@ static boolean Fire_handle_collision(Fire* fire_arr, u8 *fire_size, QuadTree *ro
 	Block *collision_block = QuadTree_check_collision(root, fire_aabb);
 
 	if (collision_block != NULL && collision_block->grid_type != AIR) {
-		if (collision_block->grid_type == DESTRUCTIBLE) {
-			collision_block->grid_type = AIR;
-		}
 		collide = true;
 	}
 
 	if (collision_block == NULL || collision_block->grid_type == DESTRUCTIBLE) {
+		if (collision_block) {
+			collision_block->grid_type = AIR;
+		}
+
 		fire_arr[*fire_size].fire_item.center = fire_aabb.center;
 		fire_arr[*fire_size].fire_item.tick_to_explode = FIRE_NORMAL_TICKS;
 		*fire_size += 1;
