@@ -7,7 +7,7 @@
 #include "utils/collision_handler.h"
 #include "utils/vector.h"
 #include "utils/fire.h"
-#include <stdio.h>
+// #include <stdio.h>
 
 int main()
 {
@@ -50,9 +50,11 @@ int main()
 	Fire fire_arr[GRID_LENGTH * GRID_LENGTH] = {0};
 	u8 fire_size = 0;
 
+#ifndef PLATFORM_WEB
 	mm_log();
+#endif // PLATFORM_WEB
 
-	printf("QuadTree len: %llu\n", QuadTree_get_len(root));
+	// printf("QuadTree len: %llu\n", QuadTree_get_len(root));
 
 	Platform_init_window("Bomb royale", SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -85,7 +87,7 @@ int main()
 
 				}
 
-				printf("Bomb %i spawning %i fires ...\n", i, bomb_arr[i].fire_power);
+				// printf("Bomb %i spawning %i fires ...\n", i, bomb_arr[i].fire_power);
 				Point* directions_avaiable[] = {
 					fire_center_left, fire_center_right,
 					fire_center_top, fire_center_bottom,
