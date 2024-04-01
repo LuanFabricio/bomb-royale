@@ -6,45 +6,8 @@
 #include "levels/level.h"
 #include "utils/collision_handler.h"
 #include "utils/vector.h"
+#include "utils/fire.h"
 #include <stdio.h>
-
-void calc_next_position(Point* center, u8 idx, u8 axis)
-{
-
-	switch (axis) {
-		case 0:
-			center->x -= GRID_SIZE * (idx + 1);
-			break;
-		case 1:
-			center->x += GRID_SIZE * (idx + 1);
-			break;
-		case 2:
-			center->y -= GRID_SIZE * (idx + 1);
-			break;
-		case 3:
-			center->y += GRID_SIZE * (idx + 1);
-			break;
-	}
-}
-
-boolean handle_filre(Fire* fire_arr, u8 *fire_size, QuadTree *root, AABB fire_aabb)
-{
-	boolean collide = false;
-	Block *collision_block = QuadTree_check_collision(root, fire_aabb);
-	if (collision_block != NULL && collision_block->grid_type != AIR) {
-		printf("Collides with %i\n", collision_block->grid_type);
-		printf("\t%.2f %.2f\n", collision_block->center.x, collision_block->center.y);
-		if (collision_block->grid_type == DESTRUCTIBLE) {
-			collision_block->grid_type = AIR;
-		}
-		collide = true;
-	}
-	fire_arr[*fire_size].fire_item.center = fire_aabb.center;
-	fire_arr[*fire_size].fire_item.tick_to_explode = FIRE_NORMAL_TICKS;
-	*fire_size += 1;
-	printf("Adding fire!\n");
-	return collide;
-}
 
 int main()
 {
@@ -102,39 +65,25 @@ int main()
 					.half_dimension = GRID_SIZE - 2,
 				};
 
+				Point fire_center_top[MAX_FIRE_LINE] = {0};
 				Point fire_center_left[MAX_FIRE_LINE] = {0};
 				Point fire_center_right[MAX_FIRE_LINE] = {0};
-				Point fire_center_top[MAX_FIRE_LINE] = {0};
 				Point fire_center_bottom[MAX_FIRE_LINE] = {0};
-				Point fire_centers[MAX_FIRE_LINE] = {0};
-				// 	fire_aabb.center,
-				// 	fire_aabb.center,
-				// 	fire_aabb.center,
-				// 	fire_aabb.center,
-				// };
 
 				for (u8 j = 0; j < bomb_arr[i].fire_power; j++) {
+					fire_center_top[j] 	= fire_aabb.center;
 					fire_center_left[j] 	= fire_aabb.center;
 					fire_center_right[j]	= fire_aabb.center;
-					fire_center_top[j] 	= fire_aabb.center;
 					fire_center_bottom[j] 	= fire_aabb.center;
 
-					calc_next_position(&fire_center_left[j], j, 0);
-					calc_next_position(&fire_center_right[j], j, 1);
-					calc_next_position(&fire_center_top[j], j, 2);
-					calc_next_position(&fire_center_bottom[j], j, 3);
+					Fire_calc_position(&fire_center_top[j], j, 2);
+					Fire_calc_position(&fire_center_left[j], j, 0);
+					Fire_calc_position(&fire_center_right[j], j, 1);
+					Fire_calc_position(&fire_center_bottom[j], j, 3);
 
 				}
 
-
-				// fire_centers[0].x -= GRID_SIZE;
-				// fire_centers[1].x += GRID_SIZE;
-				// fire_centers[2].y -= GRID_SIZE;
-				// fire_centers[3].y += GRID_SIZE;
-
 				printf("Bomb %i spawning %i fires ...\n", i, bomb_arr[i].fire_power);
-				Block *collision_block = NULL;
-
 				Point* directions_avaiable[] = {
 					fire_center_left, fire_center_right,
 					fire_center_top, fire_center_bottom,
@@ -143,30 +92,11 @@ int main()
 				for (u8 j = 0; j < 4; j++) {
 					for (u8 k = 0; k < bomb_arr[i].fire_power; k++) {
 						fire_aabb.center = directions_avaiable[j][k];
-						printf("(%.2f, %.2f)\n", fire_aabb.center.x, fire_aabb.center.y);
-						if (handle_filre(fire_arr, &fire_size, root, fire_aabb)) {
+						if (Fire_handle_collision(fire_arr, &fire_size, root, fire_aabb)) {
 							break;
 						}
 					}
 				}
-
-				printf("Total fire: %i\n", fire_size);
-
-
-				// for (u8 j = 0; j < bomb_arr[i].fire_power; j++) {
-				// 	fire_aabb.center = fire_centers[j];
-				// 	if ((collision_block = QuadTree_check_collision(root, fire_aabb)) != NULL && collision_block->grid_type != AIR) {
-				// 		printf("Collides with %i\n", collision_block->grid_type);
-				// 		printf("\t%.2f %.2f\n", collision_block->center.x, collision_block->center.y);
-				// 		if (collision_block->grid_type == DESTRUCTIBLE) {
-				// 			collision_block->grid_type = AIR;
-				// 		}
-				// 	} else {
-				// 		fire_arr[fire_size].fire_item.center = fire_aabb.center;
-				// 		fire_arr[fire_size++].fire_item.tick_to_explode = FIRE_NORMAL_TICKS;
-				// 		printf("Adding fire!\n");
-				// 	}
-				// }
 
 				bomb_size--;
 				bomb_arr[i] = bomb_arr[bomb_size];
