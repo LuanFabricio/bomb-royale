@@ -128,6 +128,9 @@ int main()
 			speed.y = 0;
 		}
 
+		speed = Vector2_scale(Vector2_normalize(speed), PLAYER_SPEED * Platform_get_frame_time());
+		players[my_id_idx].center = HandleCollision_player_collision(root, players, players_len, my_id_idx, speed);
+
 		if (bomb_delay == 0 && Platform_is_key_down(BR_KEY_SPACE)) {
 			bomb_arr[bomb_size] = (Bomb) {
 				.bomb_item = {
@@ -144,9 +147,6 @@ int main()
 		} else if (bomb_delay > 0) {
 			bomb_delay--;
 		}
-
-		speed = Vector2_scale(Vector2_normalize(speed), PLAYER_SPEED * Platform_get_frame_time());
-		players[my_id_idx].center = HandleCollision_player_collision(root, players, players_len, my_id_idx, speed);
 
 		Platform_begin_drawing();
 			Platform_clear_background(0xfffbfbfb);
