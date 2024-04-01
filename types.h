@@ -60,6 +60,7 @@ typedef struct {
 
 typedef struct {
 	EphemeralItem bomb_item;
+	u8 fire_power;
 } Bomb;
 
 typedef struct {
