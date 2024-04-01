@@ -64,6 +64,8 @@ int main()
 					.center = bomb_arr[i].bomb_item.center,
 					.half_dimension = GRID_SIZE - 2,
 				};
+				fire_arr[fire_size].fire_item.center = fire_aabb.center;
+				fire_arr[fire_size++].fire_item.tick_to_explode = FIRE_NORMAL_TICKS;
 
 				Point fire_center_top[MAX_FIRE_LINE] = {0};
 				Point fire_center_left[MAX_FIRE_LINE] = {0};
@@ -137,11 +139,11 @@ int main()
 					.center = players[my_id_idx].center,
 					.size = 3,
 					.tick_to_explode = BOMB_NORMAL_TICKS
-				}
+				},
+				.fire_power = 2,
 			};
 			bomb_arr[bomb_size].bomb_item.center.x = ((int)players[my_id_idx].center.x / GRID_SIZE) * GRID_SIZE;
 			bomb_arr[bomb_size].bomb_item.center.y = ((int)players[my_id_idx].center.y / GRID_SIZE) * GRID_SIZE;
-			bomb_arr[bomb_size].fire_power = 2;
 			bomb_size++;
 			bomb_delay = BOMB_DELAY_TICK;
 		} else if (bomb_delay > 0) {
