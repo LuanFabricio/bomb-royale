@@ -9,57 +9,34 @@
 #include "utils/fire.h"
 // #include <stdio.h>
 
-int main()
+static QuadTree *root;
+
+static u32 blocks_size = 0;
+static Block *grid = NULL;
+
+static Player players[] = {
+	{ .id = 1, .center = (Point){ GRID_SIZE*1 , GRID_SIZE*1  }, },
+	{ .id = 2, .center = (Point){ GRID_SIZE*13, GRID_SIZE*1  }, },
+	{ .id = 3, .center = (Point){ GRID_SIZE*13, GRID_SIZE*13 }, },
+};
+static u8 my_id = 1;
+static u8 my_id_idx = 0;
+
+static u8 players_len = sizeof(players)/sizeof(players[0]);
+
+static Vector2 speed = {0};
+
+static Bomb bomb_arr[GRID_LENGTH * GRID_LENGTH] = {0};
+static u8 bomb_size = 0;
+static u8 bomb_delay = 0;
+
+static Fire fire_arr[GRID_LENGTH * GRID_LENGTH] = {0};
+static u8 fire_size = 0;
+
+
+void game_loop()
 {
-	QuadTree *root = QuadTree_new((float)HALF_WIDTH, (float)HALF_HEIGHT, (float)HALF_WIDTH);
-
-	u32 blocks_size = 0;
-	Block *grid = (Block*)level_bytes;
-
-	for (u64 i = 0; i < size ; i++) {
-		// TODO: Fix this hack
-		// NOTE: level editor saves with 0 index
-		// and the game uses 1 index
-		grid[i].center.x += GRID_SIZE;
-		grid[i].center.y += GRID_SIZE;
-		QuadTree_insert(root, grid[i]);
-	}
-
-	Player players[] = {
-		{ .id = 1, .center = (Point){ GRID_SIZE*1 , GRID_SIZE*1  }, },
-		{ .id = 2, .center = (Point){ GRID_SIZE*13, GRID_SIZE*1  }, },
-		{ .id = 3, .center = (Point){ GRID_SIZE*13, GRID_SIZE*13 }, },
-	};
-	u8 my_id = 1;
-	u8 my_id_idx = 0;
-
-	u8 players_len = sizeof(players)/sizeof(players[0]);
-	for (u8 i = 0; i < players_len; i++) {
-		if (players[i].id == my_id_idx) {
-			my_id_idx = i;
-			break;
-		}
-	}
-
-	Vector2 speed = {0};
-
-	Bomb bomb_arr[GRID_LENGTH * GRID_LENGTH] = {0};
-	u8 bomb_size = 0;
-	u8 bomb_delay = 0;
-
-	Fire fire_arr[GRID_LENGTH * GRID_LENGTH] = {0};
-	u8 fire_size = 0;
-
-#ifndef PLATFORM_WEB
-	mm_log();
-#endif // PLATFORM_WEB
-
-	// printf("QuadTree len: %llu\n", QuadTree_get_len(root));
-
-	Platform_init_window("Bomb royale", SCREEN_WIDTH, SCREEN_HEIGHT);
-
-	while (!Platform_window_should_close()) {
-		for (u32 i = 0; i < bomb_size; i++) {
+	for (u32 i = 0; i < bomb_size; i++) {
 			if (bomb_arr[i].bomb_item.tick_to_explode > 0) bomb_arr[i].bomb_item.tick_to_explode -= 1;
 			else {
 				AABB fire_aabb = {
@@ -179,9 +156,43 @@ int main()
 						0xff0000ff);
 			}
 		Platform_end_drawing();
+}
+
+int main()
+{
+	root = QuadTree_new((float)HALF_WIDTH, (float)HALF_HEIGHT, (float)HALF_WIDTH);
+	grid = (Block*)level_bytes;
+	for (u64 i = 0; i < size ; i++) {
+		// TODO: Fix this hack
+		// NOTE: level editor saves with 0 index
+		// and the game uses 1 index
+		grid[i].center.x += GRID_SIZE;
+		grid[i].center.y += GRID_SIZE;
+		QuadTree_insert(root, grid[i]);
+	}
+
+	for (u8 i = 0; i < players_len; i++) {
+		if (players[i].id == my_id_idx) {
+			my_id_idx = i;
+			break;
+		}
+	}
+
+#ifndef PLATFORM_WEB
+	mm_log();
+#endif // PLATFORM_WEB
+
+	Platform_init_window("Bomb royale", SCREEN_WIDTH, SCREEN_HEIGHT);
+
+#ifndef PLATFORM_WEB
+	while (!Platform_window_should_close()) {
+		game_loop();
 	}
 
 	Platform_close_window();
+#else
+	Platform_set_loop(game_loop);
+#endif // PLATFORM_WEB
 
 	return 0;
 }
