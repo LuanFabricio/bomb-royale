@@ -15,9 +15,9 @@ static u32 blocks_size = 0;
 static Block *grid = NULL;
 
 static Player players[] = {
-	{ .id = 1, .center = (Point){ GRID_SIZE*1 , GRID_SIZE*1  }, },
-	{ .id = 2, .center = (Point){ GRID_SIZE*13, GRID_SIZE*1  }, },
-	{ .id = 3, .center = (Point){ GRID_SIZE*13, GRID_SIZE*13 }, },
+	{ .id = 1, .center = (Point){ GRID_SIZE*1 , GRID_SIZE*1  }, 1, },
+	{ .id = 2, .center = (Point){ GRID_SIZE*13, GRID_SIZE*1  }, 1, },
+	{ .id = 3, .center = (Point){ GRID_SIZE*13, GRID_SIZE*13 }, 1, },
 };
 static u8 my_id = 1;
 static u8 my_id_idx = 0;
@@ -119,7 +119,7 @@ void game_loop()
 					.size = 3,
 					.tick_to_explode = BOMB_NORMAL_TICKS
 				},
-				.fire_power = 2,
+				.fire_power = players[my_id_idx].fire_power_up,
 			};
 			bomb_arr[bomb_size].bomb_item.center.x = ((int)players[my_id_idx].center.x / GRID_SIZE) * GRID_SIZE;
 			bomb_arr[bomb_size].bomb_item.center.y = ((int)players[my_id_idx].center.y / GRID_SIZE) * GRID_SIZE;
@@ -127,6 +127,10 @@ void game_loop()
 			bomb_delay = BOMB_DELAY_TICK;
 		} else if (bomb_delay > 0) {
 			bomb_delay--;
+		}
+
+		if (Platform_is_key_pressed(BR_KEY_EQUAL)) {
+			players[my_id_idx].fire_power_up += 1;
 		}
 
 		Platform_begin_drawing();
