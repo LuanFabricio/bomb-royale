@@ -50,6 +50,7 @@ struct QuadTree {
 
 typedef struct {
 	Point center;
+	u8 fire_power_up;
 	u8 id;
 } Player;
 
@@ -75,6 +76,7 @@ typedef enum {
 	BR_KEY_D = 'D',
 	BR_KEY_S = 'S',
 	BR_KEY_SPACE = ' ',
+	BR_KEY_EQUAL = '=',
 } KeysKeyboard;
 
 #ifndef RAYLIB_H
