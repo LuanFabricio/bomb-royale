@@ -12,11 +12,13 @@ export default class Platform {
 		this.height = 0;
 		this.last_frame = Date.now();
 
-		this.key_map = new Set
+		this.key_pressed = new Set();
+		this.key_map = {};
 
 		document.addEventListener('keydown', (key) => {
 			let key_code = key_to_code(key);
 			this.key_map[key_code] = true;
+			this.key_pressed.add(key_code);
 		});
 
 		document.addEventListener('keyup', (key) => {
@@ -113,10 +115,19 @@ export default class Platform {
 		return this.key_map[key] ?? false;
 	}
 
+	/**
+	* @param {number} key 
+	* @returns {boolean}
+	* */
+	Platform_is_key_pressed(key) {
+		return this.key_pressed.has(key);
+	}
+
 	Platform_rand_seed() {}
 	Platform_begin_drawing() {}
 	Platform_end_drawing() {
 		this.last_frame = Date.now();
+		this.key_pressed.clear();
 	}
 	Platform_close_drawing() {}
 	Platform_window_should_close() { return true; }
@@ -126,6 +137,7 @@ export default class Platform {
 * @param {KeyboardEvent} key 
 * */
 function key_to_code(key) {
+	// TODO: Handle other keys
 	const keyMapping = {
 		"Enter": 257,
 	};
