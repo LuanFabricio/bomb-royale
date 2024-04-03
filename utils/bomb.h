@@ -43,7 +43,7 @@ static u32 Bomb_tick(QuadTree *root, BombArray *bombs, FireArray *fires)
 			for (u8 j = 0; j < 4; j++) {
 				for (u8 k = 0; k < bombs->arr[i].fire_power; k++) {
 					fire_aabb.center = directions_avaiable[j][k];
-					if (Fire_handle_collision(fires->arr, &fires->size, root, fire_aabb)) {
+					if (Fire_handle_collision(fires, root, fire_aabb)) {
 						break;
 					}
 				}

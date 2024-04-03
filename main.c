@@ -40,7 +40,7 @@ void game_loop()
 {
 	bombs.size = Bomb_tick(root, &bombs, &fires);
 
-	fires.size = Fire_tick(fires.arr, fires.size);
+	fires.size = Fire_tick(&fires);
 
 	if (Platform_is_key_down(BR_KEY_D)) {
 		speed.x = 1;

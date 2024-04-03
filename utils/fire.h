@@ -23,7 +23,7 @@ static void Fire_calc_position(Point* center, u8 idx, u8 axis)
 	}
 }
 
-static boolean Fire_handle_collision(Fire* fire_arr, u8 *fire_size, QuadTree *root, AABB fire_aabb)
+static boolean Fire_handle_collision(FireArray* fires, QuadTree *root, AABB fire_aabb)
 {
 	boolean collide = false;
 	Block *collision_block = QuadTree_check_collision(root, fire_aabb);
@@ -37,26 +37,26 @@ static boolean Fire_handle_collision(Fire* fire_arr, u8 *fire_size, QuadTree *ro
 			collision_block->grid_type = AIR;
 		}
 
-		fire_arr[*fire_size].fire_item.center = fire_aabb.center;
-		fire_arr[*fire_size].fire_item.tick_to_explode = FIRE_NORMAL_TICKS;
-		*fire_size += 1;
+		fires->arr[fires->size].fire_item.center = fire_aabb.center;
+		fires->arr[fires->size].fire_item.tick_to_explode = FIRE_NORMAL_TICKS;
+		fires->size += 1;
 	}
 
 	return collide;
 }
 
-static u8  Fire_tick(Fire fire_arr[GRID_LENGTH * GRID_LENGTH], u8 fire_size)
+static u8 Fire_tick(FireArray *fires)
 {
-	for (u8 i = 0; i < fire_size; i++) {
-		if (fire_arr[i].fire_item.tick_to_explode > 0) fire_arr[i].fire_item.tick_to_explode -= 1;
+	for (u8 i = 0; i < fires->size; i++) {
+		if (fires->arr[i].fire_item.tick_to_explode > 0) fires->arr[i].fire_item.tick_to_explode -= 1;
 		else {
-			fire_arr[i] = fire_arr[fire_size - 1];
-			fire_size -= 1;
+			fires->arr[i] = fires->arr[fires->size - 1];
+			fires->size -= 1;
 			if (i > 0) i -= 1;
 		}
 	}
 
-	return fire_size;
-
+	return fires->size;
 }
+
 #endif // FIRE_H_
