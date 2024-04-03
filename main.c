@@ -4,6 +4,7 @@
 #include "./platform.h"
 #include "types.h"
 #include "levels/level.h"
+#include "utils/bomb.h"
 #include "utils/collision_handler.h"
 #include "utils/vector.h"
 #include "utils/fire.h"
@@ -15,9 +16,9 @@ static u32 blocks_size = 0;
 static Block *grid = NULL;
 
 static Player players[] = {
-	{ .id = 1, .center = (Point){ GRID_SIZE*1 , GRID_SIZE*1  }, 1, },
-	{ .id = 2, .center = (Point){ GRID_SIZE*13, GRID_SIZE*1  }, 1, },
-	{ .id = 3, .center = (Point){ GRID_SIZE*13, GRID_SIZE*13 }, 1, },
+	{ .id = 1, .center = (Point){ GRID_SIZE*1 , GRID_SIZE*1  }, .fire_power_up = 1, .alive = true },
+	{ .id = 2, .center = (Point){ GRID_SIZE*13, GRID_SIZE*1  }, .fire_power_up = 1, .alive = true },
+	{ .id = 3, .center = (Point){ GRID_SIZE*13, GRID_SIZE*13 }, .fire_power_up = 1, .alive = true },
 };
 static u8 my_id = 1;
 static u8 my_id_idx = 0;
@@ -26,104 +27,52 @@ static u8 players_len = sizeof(players)/sizeof(players[0]);
 
 static Vector2 speed = {0};
 
-static Bomb bomb_arr[GRID_LENGTH * GRID_LENGTH] = {0};
-static u8 bomb_size = 0;
+static BombArray bombs = {
+	.arr = {0}, .size = 0,
+};
 static u8 bomb_delay = 0;
 
-static Fire fire_arr[GRID_LENGTH * GRID_LENGTH] = {0};
-static u8 fire_size = 0;
-
+static FireArray fires = {
+	.arr = {0}, .size = 0,
+};
 
 void game_loop()
 {
-	for (u32 i = 0; i < bomb_size; i++) {
-			if (bomb_arr[i].bomb_item.tick_to_explode > 0) bomb_arr[i].bomb_item.tick_to_explode -= 1;
-			else {
-				AABB fire_aabb = {
-					.center = bomb_arr[i].bomb_item.center,
-					.half_dimension = GRID_SIZE - 2,
-				};
-				fire_arr[fire_size].fire_item.center = fire_aabb.center;
-				fire_arr[fire_size++].fire_item.tick_to_explode = FIRE_NORMAL_TICKS;
+	bombs.size = Bomb_tick(root, &bombs, &fires);
 
-				Point fire_center_top[MAX_FIRE_LINE] = {0};
-				Point fire_center_left[MAX_FIRE_LINE] = {0};
-				Point fire_center_right[MAX_FIRE_LINE] = {0};
-				Point fire_center_bottom[MAX_FIRE_LINE] = {0};
+	fires.size = Fire_tick(fires.arr, fires.size);
 
-				for (u8 j = 0; j < bomb_arr[i].fire_power; j++) {
-					fire_center_top[j] 	= fire_aabb.center;
-					fire_center_left[j] 	= fire_aabb.center;
-					fire_center_right[j]	= fire_aabb.center;
-					fire_center_bottom[j] 	= fire_aabb.center;
+	if (Platform_is_key_down(BR_KEY_D)) {
+		speed.x = 1;
+	} else if (Platform_is_key_down(BR_KEY_A)) {
+		speed.x = -1;
+	} else {
+		speed.x = 0;
+	}
 
-					Fire_calc_position(&fire_center_top[j], j, 2);
-					Fire_calc_position(&fire_center_left[j], j, 0);
-					Fire_calc_position(&fire_center_right[j], j, 1);
-					Fire_calc_position(&fire_center_bottom[j], j, 3);
+	if (Platform_is_key_down(BR_KEY_W)) {
+		speed.y = -1;
+	} else if (Platform_is_key_down(BR_KEY_S)) {
+		speed.y = 1;
+	} else {
+		speed.y = 0;
+	}
 
-				}
+	speed = Vector2_scale(Vector2_normalize(speed), PLAYER_SPEED * Platform_get_frame_time());
+	players[my_id_idx].center = HandleCollision_player_collision(root, players, players_len, my_id_idx, speed);
 
-				// printf("Bomb %i spawning %i fires ...\n", i, bomb_arr[i].fire_power);
-				Point* directions_avaiable[] = {
-					fire_center_left, fire_center_right,
-					fire_center_top, fire_center_bottom,
-				};
-
-				for (u8 j = 0; j < 4; j++) {
-					for (u8 k = 0; k < bomb_arr[i].fire_power; k++) {
-						fire_aabb.center = directions_avaiable[j][k];
-						if (Fire_handle_collision(fire_arr, &fire_size, root, fire_aabb)) {
-							break;
-						}
-					}
-				}
-
-				bomb_size--;
-				bomb_arr[i] = bomb_arr[bomb_size];
-				--i;
-			}
-		}
-
-		for (u8 i = 0; i < fire_size; i++) {
-			if (fire_arr[i].fire_item.tick_to_explode > 0) fire_arr[i].fire_item.tick_to_explode -= 1;
-			else {
-				fire_size--;
-				fire_arr[i] = fire_arr[fire_size];
-			}
-		}
-
-		if (Platform_is_key_down(BR_KEY_D)) {
-			speed.x = 1;
-		} else if (Platform_is_key_down(BR_KEY_A)) {
-			speed.x = -1;
-		} else {
-			speed.x = 0;
-		}
-
-		if (Platform_is_key_down(BR_KEY_W)) {
-			speed.y = -1;
-		} else if (Platform_is_key_down(BR_KEY_S)) {
-			speed.y = 1;
-		} else {
-			speed.y = 0;
-		}
-
-		speed = Vector2_scale(Vector2_normalize(speed), PLAYER_SPEED * Platform_get_frame_time());
-		players[my_id_idx].center = HandleCollision_player_collision(root, players, players_len, my_id_idx, speed);
-
-		if (bomb_delay == 0 && Platform_is_key_down(BR_KEY_SPACE)) {
-			bomb_arr[bomb_size] = (Bomb) {
-				.bomb_item = {
-					.center = players[my_id_idx].center,
-					.size = 3,
+	if (bomb_delay == 0 && Platform_is_key_down(BR_KEY_SPACE)) {
+		bombs.arr[bombs.size] = (Bomb) {
+			.bomb_item = {
+				.center = players[my_id_idx].center,
+				.size = 3,
 					.tick_to_explode = BOMB_NORMAL_TICKS
 				},
-				.fire_power = players[my_id_idx].fire_power_up,
+				.fire_power = minu8(players[my_id_idx].fire_power_up, GRID_LENGTH),
 			};
-			bomb_arr[bomb_size].bomb_item.center.x = ((int)players[my_id_idx].center.x / GRID_SIZE) * GRID_SIZE;
-			bomb_arr[bomb_size].bomb_item.center.y = ((int)players[my_id_idx].center.y / GRID_SIZE) * GRID_SIZE;
-			bomb_size++;
+			bombs.arr[bombs.size].bomb_item.center.x = ((int)players[my_id_idx].center.x / GRID_SIZE) * GRID_SIZE;
+			bombs.arr[bombs.size].bomb_item.center.y = ((int)players[my_id_idx].center.y / GRID_SIZE) * GRID_SIZE;
+			bombs.size++;
 			bomb_delay = BOMB_DELAY_TICK;
 		} else if (bomb_delay > 0) {
 			bomb_delay--;
@@ -144,18 +93,18 @@ void game_loop()
 						GRID_SIZE, GRID_SIZE, 0xff919191);
 			}
 
-			for (u8 i = 0; i < bomb_size; i++) {
+			for (u8 i = 0; i < bombs.size; i++) {
 				Platform_draw_rectangle(
-						bomb_arr[i].bomb_item.center.x-(float)GRID_SIZE,
-						bomb_arr[i].bomb_item.center.y-(float)GRID_SIZE,
+						bombs.arr[i].bomb_item.center.x-(float)GRID_SIZE,
+						bombs.arr[i].bomb_item.center.y-(float)GRID_SIZE,
 						GRID_SIZE, GRID_SIZE,
 						0xff151515);
 			}
 
-			for (u8 i = 0; i < fire_size; i++) {
+			for (u8 i = 0; i < fires.size; i++) {
 				Platform_draw_rectangle(
-						fire_arr[i].fire_item.center.x-(float)GRID_SIZE,
-						fire_arr[i].fire_item.center.y-(float)GRID_SIZE,
+						fires.arr[i].fire_item.center.x-(float)GRID_SIZE,
+						fires.arr[i].fire_item.center.y-(float)GRID_SIZE,
 						GRID_SIZE, GRID_SIZE,
 						0xff0000ff);
 			}
