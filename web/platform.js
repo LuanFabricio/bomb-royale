@@ -32,7 +32,7 @@ export default class Platform {
 	* @param {number} w 
 	* @param {number} h 
 	* */
-	Platform_init_window(w, h, str_ptr) {
+	Platform_init_window(str_ptr, w, h) {
 		this.width = w;
 		this.height = h;
 
