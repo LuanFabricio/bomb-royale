@@ -52,6 +52,7 @@ typedef struct {
 	Point center;
 	u8 fire_power_up;
 	u8 id;
+	boolean alive;
 } Player;
 
 typedef struct {
@@ -65,8 +66,18 @@ typedef struct {
 } Bomb;
 
 typedef struct {
+	Bomb arr[GRID_LENGTH * GRID_LENGTH];
+	u8 size;
+} BombArray;
+
+typedef struct {
 	EphemeralItem fire_item;
 } Fire;
+
+typedef struct {
+	Fire arr[GRID_LENGTH * GRID_LENGTH];
+	u8 size;
+} FireArray;
 
 // TODO: Abstract for linux and web
 // HACK: Using Raylib key implementation
