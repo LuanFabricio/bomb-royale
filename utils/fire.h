@@ -45,4 +45,18 @@ static boolean Fire_handle_collision(Fire* fire_arr, u8 *fire_size, QuadTree *ro
 	return collide;
 }
 
+static u8  Fire_tick(Fire fire_arr[GRID_LENGTH * GRID_LENGTH], u8 fire_size)
+{
+	for (u8 i = 0; i < fire_size; i++) {
+		if (fire_arr[i].fire_item.tick_to_explode > 0) fire_arr[i].fire_item.tick_to_explode -= 1;
+		else {
+			fire_arr[i] = fire_arr[fire_size - 1];
+			fire_size -= 1;
+			if (i > 0) i -= 1;
+		}
+	}
+
+	return fire_size;
+
+}
 #endif // FIRE_H_
