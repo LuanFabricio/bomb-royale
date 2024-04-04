@@ -6,6 +6,7 @@
 #include "levels/level.h"
 #include "utils/bomb.h"
 #include "utils/collision_handler.h"
+#include "utils/input.h"
 #include "utils/vector.h"
 #include "utils/fire.h"
 // #include <stdio.h>
@@ -42,73 +43,44 @@ void game_loop()
 
 	fires.size = Fire_tick(&fires);
 
-	if (Platform_is_key_down(BR_KEY_D)) {
-		speed.x = 1;
-	} else if (Platform_is_key_down(BR_KEY_A)) {
-		speed.x = -1;
-	} else {
-		speed.x = 0;
-	}
-
-	if (Platform_is_key_down(BR_KEY_W)) {
-		speed.y = -1;
-	} else if (Platform_is_key_down(BR_KEY_S)) {
-		speed.y = 1;
-	} else {
-		speed.y = 0;
-	}
-
+	Vector2 speed = Input_speed();
 	speed = Vector2_scale(Vector2_normalize(speed), PLAYER_SPEED * Platform_get_frame_time());
 	players[my_id_idx].center = HandleCollision_player_collision(root, players, players_len, my_id_idx, speed);
 
-	if (bomb_delay == 0 && Platform_is_key_down(BR_KEY_SPACE)) {
-		bombs.arr[bombs.size] = (Bomb) {
-			.bomb_item = {
-				.center = players[my_id_idx].center,
-				.size = 3,
-					.tick_to_explode = BOMB_NORMAL_TICKS
-				},
-				.fire_power = minu8(players[my_id_idx].fire_power_up, GRID_LENGTH),
-			};
-			bombs.arr[bombs.size].bomb_item.center.x = ((int)players[my_id_idx].center.x / GRID_SIZE) * GRID_SIZE;
-			bombs.arr[bombs.size].bomb_item.center.y = ((int)players[my_id_idx].center.y / GRID_SIZE) * GRID_SIZE;
-			bombs.size++;
-			bomb_delay = BOMB_DELAY_TICK;
-		} else if (bomb_delay > 0) {
-			bomb_delay--;
-		}
+	Input_place_bomb(&bombs, players, &bomb_delay, my_id_idx);
 
-		if (Platform_is_key_pressed(BR_KEY_EQUAL)) {
-			players[my_id_idx].fire_power_up += 1;
-		}
+	if (Platform_is_key_pressed(BR_KEY_EQUAL)) {
+		players[my_id_idx].fire_power_up += 1;
+	}
 
-		Platform_begin_drawing();
-			Platform_clear_background(0xfffbfbfb);
-			QuadTree_display(root);
+	Platform_begin_drawing();
+	Platform_clear_background(0xfffbfbfb);
+	QuadTree_display(root);
 
-			for (u32 i = 0; i < players_len; i++) {
-				Platform_draw_rectangle(
-						players[i].center.x-(float)GRID_SIZE,
-						players[i].center.y-(float)GRID_SIZE,
-						GRID_SIZE, GRID_SIZE, 0xff919191);
-			}
+	for (u32 i = 0; i < players_len; i++) {
+		Platform_draw_rectangle(
+				players[i].center.x-(float)GRID_SIZE,
+				players[i].center.y-(float)GRID_SIZE,
+				GRID_SIZE, GRID_SIZE, 0xff919191);
+	}
 
-			for (u8 i = 0; i < bombs.size; i++) {
-				Platform_draw_rectangle(
-						bombs.arr[i].bomb_item.center.x-(float)GRID_SIZE,
-						bombs.arr[i].bomb_item.center.y-(float)GRID_SIZE,
-						GRID_SIZE, GRID_SIZE,
-						0xff151515);
-			}
+	for (u8 i = 0; i < bombs.size; i++) {
+		Platform_draw_rectangle(
+				bombs.arr[i].bomb_item.center.x-(float)GRID_SIZE,
+				bombs.arr[i].bomb_item.center.y-(float)GRID_SIZE,
+				GRID_SIZE, GRID_SIZE,
+				0xff151515);
+	}
 
-			for (u8 i = 0; i < fires.size; i++) {
-				Platform_draw_rectangle(
-						fires.arr[i].fire_item.center.x-(float)GRID_SIZE,
-						fires.arr[i].fire_item.center.y-(float)GRID_SIZE,
-						GRID_SIZE, GRID_SIZE,
-						0xff0000ff);
-			}
-		Platform_end_drawing();
+	for (u8 i = 0; i < fires.size; i++) {
+		Platform_draw_rectangle(
+				fires.arr[i].fire_item.center.x-(float)GRID_SIZE,
+				fires.arr[i].fire_item.center.y-(float)GRID_SIZE,
+				GRID_SIZE, GRID_SIZE,
+				0xff0000ff);
+	}
+
+	Platform_end_drawing();
 }
 
 int main()
