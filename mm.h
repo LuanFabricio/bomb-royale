@@ -28,7 +28,8 @@ static void mm_clean()
 #include <stdio.h>
 static void mm_log()
 {
-	float p = 100 * (float)memory_ptr / (float)MEMORY_SIZE;
+	float p = memory_ptr * 100;
+	p /= (float)MEMORY_SIZE;
 	printf("Memory: %u/%u(%.02f%%)\n", memory_ptr, MEMORY_SIZE, p);
 }
 #endif
