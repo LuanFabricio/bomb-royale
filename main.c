@@ -28,14 +28,10 @@ static u8 players_len = sizeof(players)/sizeof(players[0]);
 
 static Vector2 speed = {0};
 
-static BombArray bombs = {
-	.arr = {0}, .size = 0,
-};
+static BombArray bombs = {0};
 static u8 bomb_delay = 0;
 
-static FireArray fires = {
-	.arr = {0}, .size = 0,
-};
+static FireArray fires = {0};
 
 void game_loop()
 {
