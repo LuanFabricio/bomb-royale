@@ -96,4 +96,9 @@ typedef struct {
 } Vector2;
 #endif // RAYLIB_H
 
+typedef struct {
+	int idk;
+	char buffer[256];
+} ServerData;
+
 #endif // TYPE_H_
