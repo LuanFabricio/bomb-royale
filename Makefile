@@ -10,3 +10,9 @@ raylib:	main.c raylib/raylib.c build_folders
 
 raylib/level_editor: raylib/level_editor.c build_folders
 	gcc -g -Wall -Wextra -o build/level_editor.out raylib/level_editor.c -lraylib
+
+server: net/server.c
+	gcc -g -Wall -Wextra -o build/server.out net/server.c
+
+client: net/client.c
+	gcc -g -Wall -Wextra -o build/client.out net/client.c
