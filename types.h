@@ -33,6 +33,7 @@ typedef struct {
 } GameBoard;
 
 typedef struct {
+	u8 uid;
 	Point center;
 	GridType grid_type;
 } Block;
@@ -96,9 +97,25 @@ typedef struct {
 } Vector2;
 #endif // RAYLIB_H
 
+typedef enum {
+	PING,
+	UPDATE_MAP,
+	UPDATE_PLAYERS,
+	REQUEST_MAP,
+	REQUEST_PLAYERS,
+} GameNetEvent;
+
 typedef struct {
-	int idk;
-	char buffer[256];
+	GameNetEvent event;
+	union {
+		struct {
+			Block data[GRID_LENGTH * GRID_LENGTH];
+			u32 size;
+		} GameMap;
+		struct {
+			Player players[4];
+		} GamePlayers;
+	};
 } ServerData;
 
 #endif // TYPE_H_
