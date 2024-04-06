@@ -56,6 +56,8 @@ int main()
 
 	GridType current_type = DESTRUCTIBLE;
 
+	u32 block_uid = 0;
+
 	while(!WindowShouldClose()) {
 		if (IsKeyPressed(KEY_ONE)) {
 			current_type = AIR;
@@ -72,6 +74,7 @@ int main()
 			u32 mouse_y = (u32)mouse_pos.y / GRID_SIZE;
 
 			if (current_type != AIR) {
+				blocks[blocks_size].uid = block_uid++;
 				blocks[blocks_size].center.x = mouse_x * GRID_SIZE;
 				blocks[blocks_size].center.y = mouse_y * GRID_SIZE;
 				blocks[blocks_size++].grid_type = current_type;
