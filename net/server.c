@@ -7,12 +7,20 @@
 #include <netinet/in.h>
 
 #include "../types.h"
+#include "../utils/net.h"
+#include "../levels/level.h"
 
 #define SERVER_PORT 4242
 
 int main()
 {
-	printf("Hello world\n");
+	Block blocks[GRID_LENGTH * GRID_LENGTH] = {0};
+	size_t blocks_size = size;
+
+	for (size_t i = 0; i < blocks_size; i++) {
+		blocks[i] = ((Block*)level_bytes)[i];
+	}
+
 	int server_fd = socket(AF_INET, SOCK_STREAM, 0);
 
 	if (server_fd < 0) {
@@ -51,11 +59,30 @@ int main()
 		ServerData data = {0};
 		ssize_t bytes = recv(client_fd, &data, sizeof(ServerData), 0);
 
-		printf("Buffer: %s\nIDK: %i\n", data.buffer, data.idk);
+		printf("[");
+		Net_print_event(data.event);
+		printf("]");
 
-		send(client_fd, "Hi\n", 3, 0);
+		switch (data.event) {
+		case PING:
+			printf("Pong");
+			break;
+		case REQUEST_MAP:
+			data.event = UPDATE_MAP;
+			memcpy(data.GameMap.data, blocks, blocks_size * sizeof(Block));
+			data.GameMap.size = blocks_size;
+			break;
 
+		case REQUEST_PLAYERS:
+
+			break;
+		default:
+			break;
+		}
+
+		send(client_fd, &data, sizeof(ServerData), 0);
 		close(client_fd);
+		if (blocks_size > 0) blocks_size--;
 	}
 
 	close(server_fd);
