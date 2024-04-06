@@ -13,8 +13,6 @@
 
 static QuadTree *root;
 
-static u32 blocks_size = 0;
-
 static Player players[] = {
 	{ .id = 1, .center = (Point){ GRID_SIZE*1 , GRID_SIZE*1  }, .fire_power_up = 1, .alive = true },
 	{ .id = 2, .center = (Point){ GRID_SIZE*13, GRID_SIZE*1  }, .fire_power_up = 1, .alive = true },
@@ -82,7 +80,8 @@ int main()
 {
 	root = QuadTree_new((float)HALF_WIDTH, (float)HALF_HEIGHT, (float)HALF_WIDTH);
 	Block *grid = (Block*)level_bytes;
-	for (u64 i = 0; i < size ; i++) {
+	u32 block_size = size;
+	for (u64 i = 0; i < block_size ; i++) {
 		// TODO: Fix this hack
 		// NOTE: level editor saves with 0 index
 		// and the game uses 1 index
