@@ -61,7 +61,7 @@ int main()
 
 		printf("[");
 		Net_print_event(data.event);
-		printf("]");
+		printf("]\n");
 
 		switch (data.event) {
 		case PING:
@@ -82,7 +82,6 @@ int main()
 
 		send(client_fd, &data, sizeof(ServerData), 0);
 		close(client_fd);
-		if (blocks_size > 0) blocks_size--;
 	}
 
 	close(server_fd);
