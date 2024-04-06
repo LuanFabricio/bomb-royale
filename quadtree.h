@@ -85,6 +85,24 @@ QUADTREE boolean QuadTree_insert(QuadTree *root, Block obj)
 	return false;
 }
 
+QUADTREE boolean QuadTree_remove_by_id(QuadTree* root, u32 uid)
+{
+	u8 obj_size = root->objects_size;
+	for (u8 i = 0; i < obj_size; i++) {
+		if (root->objects[i].uid == uid) {
+			root->objects[i] = root->objects[obj_size-1];
+			return true;
+		}
+	}
+
+	if (root->north_east == NULL) return false;
+
+	return QuadTree_remove_by_id(root->north_west, uid)
+		&& QuadTree_remove_by_id(root->north_east, uid)
+		&& QuadTree_remove_by_id(root->south_west, uid)
+		&& QuadTree_remove_by_id(root->south_east, uid);
+}
+
 QUADTREE Block* QuadTree_check_collision(const QuadTree *root, AABB aabb)
 {
 	if (!AABB_intersects(root->node, aabb)) {
