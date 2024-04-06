@@ -15,4 +15,4 @@ server: net/server.c
 	gcc -g -Wall -Wextra -o build/server.out net/server.c
 
 client: net/client.c
-	gcc -g -Wall -Wextra -o build/client.out net/client.c
+	gcc -g -Wall -Wextra -o build/client.out net/client.c raylib/raylib.c -lraylib -lm
