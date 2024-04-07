@@ -62,11 +62,6 @@ int main()
 
 	root = QuadTree_new((float)HALF_WIDTH, (float)HALF_HEIGHT, (float)HALF_WIDTH);
 	for (u64 i = 0; i < data.GameMap.size ; i++) {
-		// TODO: Fix this hack
-		// NOTE: level editor saves with 0 index
-		// and the game uses 1 index
-		grid[i].center.x += GRID_SIZE;
-		grid[i].center.y += GRID_SIZE;
 		QuadTree_insert(root, grid[i]);
 	}
 
