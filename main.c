@@ -82,11 +82,6 @@ int main()
 	Block *grid = (Block*)level_bytes;
 	u32 block_size = size;
 	for (u64 i = 0; i < block_size ; i++) {
-		// TODO: Fix this hack
-		// NOTE: level editor saves with 0 index
-		// and the game uses 1 index
-		grid[i].center.x += GRID_SIZE;
-		grid[i].center.y += GRID_SIZE;
 		QuadTree_insert(root, grid[i]);
 	}
 
