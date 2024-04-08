@@ -36,21 +36,21 @@ static void Input_place_bomb(BombArray *bombs, Player players[], u8* bomb_delay,
 			.bomb_item = {
 				.center = players[my_id_idx].center,
 				.size = 3,
-					.tick_to_explode = BOMB_NORMAL_TICKS
-				},
+				.tick_to_explode = BOMB_NORMAL_TICKS
+			},
 				.fire_power = minu8(players[my_id_idx].fire_power_up, GRID_LENGTH),
-			};
-			bombs->arr[bombs->size].bomb_item.center.x = (int)(players[my_id_idx].center.x / GRID_SIZE);
-			bombs->arr[bombs->size].bomb_item.center.x *= GRID_SIZE;
+		};
+		bombs->arr[bombs->size].bomb_item.center.x = (int)(players[my_id_idx].center.x / GRID_SIZE);
+		bombs->arr[bombs->size].bomb_item.center.x *= GRID_SIZE;
 
-			bombs->arr[bombs->size].bomb_item.center.y = (int)(players[my_id_idx].center.y / GRID_SIZE);
-			bombs->arr[bombs->size].bomb_item.center.y *= GRID_SIZE;
+		bombs->arr[bombs->size].bomb_item.center.y = (int)(players[my_id_idx].center.y / GRID_SIZE);
+		bombs->arr[bombs->size].bomb_item.center.y *= GRID_SIZE;
 
-			bombs->size++;
-			*bomb_delay = BOMB_DELAY_TICK;
-		} else if (*bomb_delay > 0) {
-			*bomb_delay -= 1;
-		}
+		bombs->size++;
+		*bomb_delay = BOMB_DELAY_TICK;
+	} else if (*bomb_delay > 0) {
+		*bomb_delay -= 1;
+	}
 }
 
 #endif // INPUT_H_
