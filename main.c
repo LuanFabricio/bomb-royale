@@ -36,11 +36,11 @@ void game_loop()
 
 	fires.size = Fire_tick(&fires);
 
+	Input_place_bomb(&bombs, players, &bomb_delay, my_id_idx);
+
 	Vector2 speed = Input_speed();
 	speed = Vector2_scale(Vector2_normalize(speed), PLAYER_SPEED * Platform_get_frame_time());
 	players[my_id_idx].center = HandleCollision_player_collision(root, players, players_len, my_id_idx, speed);
-
-	Input_place_bomb(&bombs, players, &bomb_delay, my_id_idx);
 
 	if (Platform_is_key_pressed(BR_KEY_EQUAL)) {
 		players[my_id_idx].fire_power_up += 1;
