@@ -15,6 +15,7 @@
 #define GRID_LENGTH 13
 #define GRID_SIZE 64
 
+#define MAX_PLAYERS 4
 #define PLAYER_SPEED 550
 
 #define MAX_FIRE_LINE GRID_LENGTH
