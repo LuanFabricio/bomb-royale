@@ -97,6 +97,15 @@ typedef struct {
 } Vector2;
 #endif // RAYLIB_H
 
+typedef struct {
+	QuadTree *root;
+	Player players[MAX_PLAYERS];
+	u8 my_id, my_id_idx, players_len;
+	FireArray fires;
+	BombArray bombs;
+	u8 bomb_delay;
+} Game;
+
 typedef enum {
 	PING,
 	UPDATE_MAP,
