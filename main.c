@@ -1,74 +1,60 @@
 #include "defines.h"
 #include "mm.h"
 #include "quadtree.h"
-#include "./platform.h"
 #include "types.h"
 #include "levels/level.h"
+#include "./platform.h"
+#include "gamemode/default.h"
 #include "utils/bomb.h"
 #include "utils/collision_handler.h"
 #include "utils/input.h"
 #include "utils/vector.h"
 #include "utils/fire.h"
-// #include <stdio.h>
 
-static QuadTree *root;
-
-static Player players[] = {
-	{ .id = 1, .center = (Point){ GRID_SIZE*1 , GRID_SIZE*1  }, .fire_power_up = 1, .alive = true },
-	{ .id = 2, .center = (Point){ GRID_SIZE*13, GRID_SIZE*1  }, .fire_power_up = 1, .alive = true },
-	{ .id = 3, .center = (Point){ GRID_SIZE*13, GRID_SIZE*13 }, .fire_power_up = 1, .alive = true },
-};
-static u8 my_id = 1;
-static u8 my_id_idx = 0;
-
-static u8 players_len = sizeof(players)/sizeof(players[0]);
-
-static Vector2 speed = {0};
-
-static BombArray bombs = {0};
-static u8 bomb_delay = 0;
-
-static FireArray fires = {0};
+static Game game = {0};
 
 void game_loop()
 {
-	bombs.size = Bomb_tick(root, &bombs, &fires);
+	game.bombs.size = Bomb_tick(game.root, &game.bombs, &game.fires);
 
-	fires.size = Fire_tick(&fires);
+	game.fires.size = Fire_tick(&game.fires);
 
-	Input_place_bomb(&bombs, players, &bomb_delay, my_id_idx);
+	Input_place_bomb(&game.bombs, game.players, &game.bomb_delay, game.my_id_idx);
 
 	Vector2 speed = Input_speed();
 	speed = Vector2_scale(Vector2_normalize(speed), PLAYER_SPEED * Platform_get_frame_time());
-	players[my_id_idx].center = HandleCollision_player_collision(root, players, players_len, my_id_idx, speed);
+	game.players[game.my_id_idx].center = HandleCollision_player_collision(
+			game.root,
+			game.players, game.players_len,
+			game.my_id_idx, speed);
 
 	if (Platform_is_key_pressed(BR_KEY_EQUAL)) {
-		players[my_id_idx].fire_power_up += 1;
+		game.players[game.my_id_idx].fire_power_up += 1;
 	}
 
 	Platform_begin_drawing();
 	Platform_clear_background(0xfffbfbfb);
-	QuadTree_display(root);
+	QuadTree_display(game.root);
 
-	for (u32 i = 0; i < players_len; i++) {
+	for (u8 i = 0; i < game.players_len; i++) {
 		Platform_draw_rectangle(
-				players[i].center.x-(float)GRID_SIZE,
-				players[i].center.y-(float)GRID_SIZE,
+				game.players[i].center.x-(float)GRID_SIZE,
+				game.players[i].center.y-(float)GRID_SIZE,
 				GRID_SIZE, GRID_SIZE, 0xff919191);
 	}
 
-	for (u8 i = 0; i < bombs.size; i++) {
+	for (u8 i = 0; i < game.bombs.size; i++) {
 		Platform_draw_rectangle(
-				bombs.arr[i].bomb_item.center.x-(float)GRID_SIZE,
-				bombs.arr[i].bomb_item.center.y-(float)GRID_SIZE,
+				game.bombs.arr[i].bomb_item.center.x-(float)GRID_SIZE,
+				game.bombs.arr[i].bomb_item.center.y-(float)GRID_SIZE,
 				GRID_SIZE, GRID_SIZE,
 				0xff151515);
 	}
 
-	for (u8 i = 0; i < fires.size; i++) {
+	for (u8 i = 0; i < game.fires.size; i++) {
 		Platform_draw_rectangle(
-				fires.arr[i].fire_item.center.x-(float)GRID_SIZE,
-				fires.arr[i].fire_item.center.y-(float)GRID_SIZE,
+				game.fires.arr[i].fire_item.center.x-(float)GRID_SIZE,
+				game.fires.arr[i].fire_item.center.y-(float)GRID_SIZE,
 				GRID_SIZE, GRID_SIZE,
 				0xff0000ff);
 	}
@@ -78,16 +64,12 @@ void game_loop()
 
 int main()
 {
-	root = QuadTree_new((float)HALF_WIDTH, (float)HALF_HEIGHT, (float)HALF_WIDTH);
-	Block *grid = (Block*)level_bytes;
-	u32 block_size = size;
-	for (u64 i = 0; i < block_size ; i++) {
-		QuadTree_insert(root, grid[i]);
-	}
+	game = GM_Default_init();
+	QuadTree_load_map(game.root, (Block*)level_bytes, size);
 
-	for (u8 i = 0; i < players_len; i++) {
-		if (players[i].id == my_id_idx) {
-			my_id_idx = i;
+	for (u8 i = 0; i < game.players_len; i++) {
+		if (game.players[i].id == game.my_id_idx) {
+			game.my_id_idx = i;
 			break;
 		}
 	}
