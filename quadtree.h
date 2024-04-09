@@ -169,5 +169,15 @@ QUADTREE u64 QuadTree_get_len(const QuadTree *root)
 
 	return len;
 }
+QUADTREE void QuadTree_load_map(QuadTree *root, Block* grid, u32 grid_size)
+{
+	if (root == NULL) {
+		return;
+	}
+
+	for (u32 i = 0; i < grid_size; i++) {
+		QuadTree_insert(root, grid[i]);
+	}
+}
 
 #endif // QUADTREE_H_
