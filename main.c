@@ -56,7 +56,7 @@ void game_loop()
 				game.fires.arr[i].fire_item.center.x-(float)GRID_SIZE,
 				game.fires.arr[i].fire_item.center.y-(float)GRID_SIZE,
 				GRID_SIZE, GRID_SIZE,
-				0xff0000ff);
+				0xff3030ff);
 	}
 
 	Platform_end_drawing();
