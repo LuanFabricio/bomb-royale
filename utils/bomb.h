@@ -22,7 +22,8 @@ static u32 Bomb_tick(QuadTree *root, BombArray *bombs, FireArray *fires)
 			Point fire_center_right[MAX_FIRE_LINE] = {0};
 			Point fire_center_bottom[MAX_FIRE_LINE] = {0};
 
-			for (u8 j = 0; j < bombs->arr[i].fire_power; j++) {
+			u8 fire_power = bombs->arr[i].fire_power;
+			for (u8 j = 0; j < fire_power; j++) {
 				fire_center_top[j] 	= fire_aabb.center;
 				fire_center_left[j] 	= fire_aabb.center;
 				fire_center_right[j]	= fire_aabb.center;
@@ -41,7 +42,7 @@ static u32 Bomb_tick(QuadTree *root, BombArray *bombs, FireArray *fires)
 			};
 
 			for (u8 j = 0; j < 4; j++) {
-				for (u8 k = 0; k < bombs->arr[i].fire_power; k++) {
+				for (u8 k = 0; k < fire_power; k++) {
 					fire_aabb.center = directions_avaiable[j][k];
 					if (Fire_handle_collision(fires, root, fire_aabb)) {
 						break;
