@@ -98,9 +98,9 @@ QUADTREE boolean QuadTree_remove_by_id(QuadTree* root, u32 uid)
 	if (root->north_east == NULL) return false;
 
 	return QuadTree_remove_by_id(root->north_west, uid)
-		&& QuadTree_remove_by_id(root->north_east, uid)
-		&& QuadTree_remove_by_id(root->south_west, uid)
-		&& QuadTree_remove_by_id(root->south_east, uid);
+		|| QuadTree_remove_by_id(root->north_east, uid)
+		|| QuadTree_remove_by_id(root->south_west, uid)
+		|| QuadTree_remove_by_id(root->south_east, uid);
 }
 
 QUADTREE Block* QuadTree_check_collision(const QuadTree *root, AABB aabb)
@@ -176,6 +176,7 @@ QUADTREE void QuadTree_load_map(QuadTree *root, Block* grid, u32 grid_size)
 	}
 
 	for (u32 i = 0; i < grid_size; i++) {
+		grid[i].uid = i;
 		QuadTree_insert(root, grid[i]);
 	}
 }
