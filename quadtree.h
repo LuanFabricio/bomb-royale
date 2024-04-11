@@ -90,7 +90,8 @@ QUADTREE boolean QuadTree_remove_by_id(QuadTree* root, u32 uid)
 	u8 obj_size = root->objects_size;
 	for (u8 i = 0; i < obj_size; i++) {
 		if (root->objects[i].uid == uid) {
-			root->objects[i] = root->objects[obj_size-1];
+			root->objects_size -= 1;
+			root->objects[i] = root->objects[root->objects_size];
 			return true;
 		}
 	}
@@ -176,7 +177,7 @@ QUADTREE void QuadTree_load_map(QuadTree *root, Block* grid, u32 grid_size)
 	}
 
 	for (u32 i = 0; i < grid_size; i++) {
-		grid[i].uid = i;
+		grid[i].uid = i+1;
 		QuadTree_insert(root, grid[i]);
 	}
 }
