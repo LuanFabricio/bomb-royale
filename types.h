@@ -29,10 +29,6 @@ typedef enum {
 } GridType;
 
 typedef struct {
-	GridType grid[GRID_SIZE][GRID_SIZE];
-} GameBoard;
-
-typedef struct {
 	u8 uid;
 	Point center;
 	GridType grid_type;
@@ -97,6 +93,10 @@ typedef struct {
 } Vector2;
 #endif // RAYLIB_H
 
+typedef enum {
+	GAMEMODE_DEFAULT,
+} GameMode;
+
 typedef struct {
 	QuadTree *root;
 	Player players[MAX_PLAYERS];
@@ -104,6 +104,7 @@ typedef struct {
 	FireArray fires;
 	BombArray bombs;
 	u8 bomb_delay;
+	GameMode game_mode;
 } Game;
 
 typedef enum {
