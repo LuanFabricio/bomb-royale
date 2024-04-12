@@ -22,6 +22,7 @@ static Game GM_Default_init()
 	game.my_id_idx = 0;
 
 	game.root = QuadTree_new((float)HALF_WIDTH, (float)HALF_HEIGHT, (float)HALF_WIDTH);
+	game.game_mode = GAMEMODE_DEFAULT;
 
 	return game;
 }
