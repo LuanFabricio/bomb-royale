@@ -29,7 +29,7 @@ static Vector2 Input_speed()
 	return speed;
 }
 
-static void Input_place_bomb(BombArray *bombs, Player players[], u8* bomb_delay, u8 my_id_idx)
+static boolean Input_place_bomb(BombArray *bombs, Player players[], u8* bomb_delay, u8 my_id_idx)
 {
 	if (*bomb_delay == 0 && Platform_is_key_down(BR_KEY_SPACE)) {
 		bombs->arr[bombs->size] = (Bomb) {
@@ -48,9 +48,13 @@ static void Input_place_bomb(BombArray *bombs, Player players[], u8* bomb_delay,
 
 		bombs->size++;
 		*bomb_delay = BOMB_DELAY_TICK;
+
+		return true;
 	} else if (*bomb_delay > 0) {
 		*bomb_delay -= 1;
 	}
+
+	return false;
 }
 
 #endif // INPUT_H_
