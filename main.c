@@ -20,25 +20,20 @@ void game_loop()
 
 	game.fires.size = Fire_tick(&game.fires);
 
-	boolean bomb_placed = Input_place_bomb(&game.bombs, game.players, &game.bomb_delay, game.my_id_idx);
+	boolean bomb_placed = Input_place_bomb(&game);
 
 	Vector2 speed = Input_speed();
 	speed = Vector2_scale(Vector2_normalize(speed), PLAYER_SPEED * Platform_get_frame_time());
-	game.players[game.my_id_idx].center = HandleCollision_player_collision(
+	CollisionResponse cr = HandleCollision_player_collision(
 			game.root,
 			game.players, game.players_len,
 			game.my_id_idx, speed);
 
+	game.players[game.my_id_idx].center = cr.center;
+	game.hit_goal |= cr.hit_goal;
+
 	if (Platform_is_key_pressed(BR_KEY_EQUAL)) {
 		game.players[game.my_id_idx].fire_power_up += 1;
-	}
-
-	switch (game.game_mode) {
-		case GAMEMODE_LIMITED_BOMBS:
-			GM_Limited_Bombs_on_tick(&game, bomb_placed);
-			break;
-		default:
-			break;
 	}
 
 	Platform_begin_drawing();
@@ -70,6 +65,10 @@ void game_loop()
 
 	if (!game.players[game.my_id_idx].alive) {
 		Platform_draw_rectangle((float)HALF_WIDTH-32, 32, 64, 64, 0xff0000ff);
+	}
+
+	if (game.hit_goal) {
+		Platform_draw_rectangle((float)HALF_WIDTH-32, 32, 64, 64, 0xffaaaaff);
 	}
 
 	Platform_end_drawing();
