@@ -4,6 +4,7 @@
 #include "../types.h"
 #include "../platform.h"
 #include "../defines.h"
+#include "../gamemode/handler.h"
 #include "./math.h"
 
 static Vector2 Input_speed()
@@ -29,21 +30,24 @@ static Vector2 Input_speed()
 	return speed;
 }
 
-static boolean Input_place_bomb(BombArray *bombs, Player players[], u8* bomb_delay, u8 my_id_idx)
-{
-	if (*bomb_delay == 0 && Platform_is_key_down(BR_KEY_SPACE)) {
+static boolean Input_place_bomb(Game *game) {
+	u8 *bomb_delay = &game->bomb_delay;
+	Player player = game->players[game->my_id_idx];
+	BombArray *bombs = &game->bombs;
+
+	if (*bomb_delay == 0 && Platform_is_key_down(BR_KEY_SPACE) && GM_Handler_should_place_bomb(game)) {
 		bombs->arr[bombs->size] = (Bomb) {
 			.bomb_item = {
-				.center = players[my_id_idx].center,
+				.center = player.center,
 				.size = 3,
 				.tick_to_explode = BOMB_NORMAL_TICKS
 			},
-				.fire_power = minu8(players[my_id_idx].fire_power_up, GRID_LENGTH),
+				.fire_power = minu8(player.fire_power_up, GRID_LENGTH),
 		};
-		bombs->arr[bombs->size].bomb_item.center.x = (int)(players[my_id_idx].center.x / GRID_SIZE);
+		bombs->arr[bombs->size].bomb_item.center.x = (int)(player.center.x / GRID_SIZE);
 		bombs->arr[bombs->size].bomb_item.center.x *= GRID_SIZE;
 
-		bombs->arr[bombs->size].bomb_item.center.y = (int)(players[my_id_idx].center.y / GRID_SIZE);
+		bombs->arr[bombs->size].bomb_item.center.y = (int)(player.center.y / GRID_SIZE);
 		bombs->arr[bombs->size].bomb_item.center.y *= GRID_SIZE;
 
 		bombs->size++;
