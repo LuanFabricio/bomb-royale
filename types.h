@@ -19,6 +19,11 @@ typedef struct {
 
 typedef struct {
 	Point center;
+	boolean hit_goal;
+} CollisionResponse;
+
+typedef struct {
+	Point center;
 	float half_dimension;
 } AABB;
 
@@ -26,6 +31,7 @@ typedef enum {
 	AIR,
 	DESTRUCTIBLE,
 	INDESTRUCTIBLE,
+	GOAL,
 } GridType;
 
 typedef struct {
@@ -105,6 +111,7 @@ typedef struct {
 	FireArray fires;
 	BombArray bombs;
 	u8 bomb_delay;
+	boolean hit_goal;
 	GameMode game_mode;
 	union {
 		struct {
