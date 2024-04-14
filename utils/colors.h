@@ -7,6 +7,7 @@ const u32 COLORS[] = {
 	0xffffffff,
 	0xff0000ff,
 	0xffbbbbbb,
+	0xffffaaaa,
 };
 const u64 COLOR_SIZE = sizeof(COLORS)/sizeof(COLORS[0]);
 
