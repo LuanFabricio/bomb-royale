@@ -1,4 +1,5 @@
 #include "defines.h"
+#include "gamemode/limited_bombs.h"
 #include "mm.h"
 #include "quadtree.h"
 #include "types.h"
@@ -19,7 +20,7 @@ void game_loop()
 
 	game.fires.size = Fire_tick(&game.fires);
 
-	Input_place_bomb(&game.bombs, game.players, &game.bomb_delay, game.my_id_idx);
+	boolean bomb_placed = Input_place_bomb(&game.bombs, game.players, &game.bomb_delay, game.my_id_idx);
 
 	Vector2 speed = Input_speed();
 	speed = Vector2_scale(Vector2_normalize(speed), PLAYER_SPEED * Platform_get_frame_time());
@@ -30,6 +31,14 @@ void game_loop()
 
 	if (Platform_is_key_pressed(BR_KEY_EQUAL)) {
 		game.players[game.my_id_idx].fire_power_up += 1;
+	}
+
+	switch (game.game_mode) {
+		case GAMEMODE_LIMITED_BOMBS:
+			GM_Limited_Bombs_on_tick(&game, bomb_placed);
+			break;
+		default:
+			break;
 	}
 
 	Platform_begin_drawing();
@@ -59,12 +68,16 @@ void game_loop()
 				0xff3030ff);
 	}
 
+	if (!game.players[game.my_id_idx].alive) {
+		Platform_draw_rectangle((float)HALF_WIDTH-32, 32, 64, 64, 0xff0000ff);
+	}
+
 	Platform_end_drawing();
 }
 
 int main()
 {
-	game = GM_Default_init();
+	game = GM_Limited_Bombs_init(); //GM_Default_init();
 	QuadTree_load_map(game.root, (Block*)level_bytes, size);
 
 	for (u8 i = 0; i < game.players_len; i++) {
