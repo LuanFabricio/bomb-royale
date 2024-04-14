@@ -95,6 +95,7 @@ typedef struct {
 
 typedef enum {
 	GAMEMODE_DEFAULT,
+	GAMEMODE_LIMITED_BOMBS,
 } GameMode;
 
 typedef struct {
@@ -105,6 +106,11 @@ typedef struct {
 	BombArray bombs;
 	u8 bomb_delay;
 	GameMode game_mode;
+	union {
+		struct {
+			u32 remaning_bombs;
+		} limited_bombs;
+	} game_mode_details;
 } Game;
 
 typedef enum {
