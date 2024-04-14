@@ -65,6 +65,8 @@ int main()
 			current_type = DESTRUCTIBLE;
 		} else if (IsKeyPressed(KEY_THREE)) {
 			current_type = INDESTRUCTIBLE;
+		} else if (IsKeyPressed(KEY_FOUR)) {
+			current_type = GOAL;
 		}
 
 		if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
