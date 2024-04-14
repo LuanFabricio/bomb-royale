@@ -67,24 +67,30 @@ static void _HandleCollision_move_player_aabb(AABB *aabb1, float position, Vecto
 // 	return player_aabb;
 // }
 
-static void _HandleCollision_obj_collider(const QuadTree* root, AABB* player_aabb, Vector2 speed, Axis axis)
+static boolean _HandleCollision_obj_collider(const QuadTree* root, AABB* player_aabb, Vector2 speed, Axis axis)
 {
 	Block *collision = NULL;
 	if ((collision = QuadTree_check_collision(root, *player_aabb))) {
 		// printf("Collision: %p\n", collision);
 		// printf("Collision: %.2f %.2f\n", collision.center.x, collision->center.y);
 
-		float value = 0;
-		switch (axis) {
-			case X:
-				value = collision->center.x;
-				break;
-			case Y:
-				value = collision->center.y;
-				break;
+		if (collision->grid_type == GOAL) {
+			return true;
+		} else {
+			float value = 0;
+			switch (axis) {
+				case X:
+					value = collision->center.x;
+					break;
+				case Y:
+					value = collision->center.y;
+					break;
+			}
+			_HandleCollision_move_player_aabb(player_aabb, value, speed, axis);
 		}
-		_HandleCollision_move_player_aabb(player_aabb, value, speed, axis);
 	}
+
+	return false;
 }
 
 static void _HandleCollision_player_collider(const Player* players, const u8 players_len, u8 player_idx, AABB *player_aabb, Vector2 speed, Axis axis)
@@ -108,7 +114,7 @@ static void _HandleCollision_player_collider(const Player* players, const u8 pla
 	}
 }
 
-static Point HandleCollision_player_collision(const QuadTree* root, const Player* players, u8 players_len, u8 player_idx, Vector2 speed)
+static CollisionResponse HandleCollision_player_collision(const QuadTree* root, const Player* players, u8 players_len, u8 player_idx, Vector2 speed)
 {
 	AABB player_aabb = {
 		.center = players[player_idx].center,
@@ -116,12 +122,11 @@ static Point HandleCollision_player_collision(const QuadTree* root, const Player
 	};
 
 	player_aabb.center.x += speed.x;
-	_HandleCollision_obj_collider(root, &player_aabb, speed, X);
+	boolean hit_goal = _HandleCollision_obj_collider(root, &player_aabb, speed, X);
 	_HandleCollision_player_collider(players, players_len, player_idx, &player_aabb, speed, X);
 
-
 	player_aabb.center.y += speed.y;
-	_HandleCollision_obj_collider(root, &player_aabb, speed, Y);
+	hit_goal |= _HandleCollision_obj_collider(root, &player_aabb, speed, Y);
 	_HandleCollision_player_collider(players, players_len, player_idx, &player_aabb, speed, Y);
 
 	player_aabb.center.x = maxf(player_aabb.center.x, GRID_SIZE);
@@ -129,7 +134,10 @@ static Point HandleCollision_player_collision(const QuadTree* root, const Player
 
 	player_aabb.center.y = maxf(player_aabb.center.y, GRID_SIZE);
 	player_aabb.center.y = minf(player_aabb.center.y, SCREEN_HEIGHT);
-	return player_aabb.center;
+	return (CollisionResponse) {
+		.center = player_aabb.center,
+		.hit_goal = hit_goal
+	};
 }
 
 #endif // COLLISION_HANDLER_H
