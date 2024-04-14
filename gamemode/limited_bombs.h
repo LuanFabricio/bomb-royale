@@ -28,4 +28,9 @@ static void GM_Limited_Bombs_on_tick(Game *game, boolean bomb_placed)
 	}
 }
 
+static boolean GM_Limited_Bombs_should_place_bomb(const Game *game)
+{
+	return game->game_mode_details.limited_bombs.remaning_bombs > 0;
+}
+
 #endif // GAMEMODE_LIMITED_BOMBS_H
