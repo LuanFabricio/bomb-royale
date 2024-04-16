@@ -6,6 +6,7 @@
 #include "levels/level.h"
 #include "./platform.h"
 #include "gamemode/default.h"
+#include "ui.h"
 #include "utils/bomb.h"
 #include "utils/collision_handler.h"
 #include "utils/input.h"
@@ -70,6 +71,8 @@ void game_loop()
 	if (game.hit_goal) {
 		Platform_draw_rectangle((float)HALF_WIDTH-32, 32, 64, 64, 0xffaaaaff);
 	}
+
+	UI_draw_home();
 
 	Platform_end_drawing();
 }
