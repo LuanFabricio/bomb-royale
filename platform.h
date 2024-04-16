@@ -18,6 +18,10 @@ extern void Platform_clear_background(u32 color);
 extern void Platform_draw_rectangle(float x, float y, float w, float h, u32 color);
 extern void Platform_draw_rectangle_lines(float x, float y, float w, float h, u32 color);
 
+// ========================== Text section  ==========================
+
+extern void Platform_text(const char *text, float x, float y, u32 font_size, u32 color);
+
 // ========================== Input section  =========================
 
 extern boolean Platform_is_key_pressed(u32 key);

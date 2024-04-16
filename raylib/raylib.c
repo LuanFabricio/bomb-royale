@@ -10,10 +10,14 @@
 
 #define U32_TO_COLOR(u32_color) *(Color*)(&(u32_color))
 
+Font font = {0};
+
 void Platform_init_window(const char *title, uint32_t w, uint32_t h)
 {
 	InitWindow(w, h, title);
 	SetTargetFPS(60);
+
+	font = LoadFont("../../assets/Jersey/Jersey10-Regular.ttf");
 }
 
 bool Platform_window_should_close()
@@ -44,6 +48,16 @@ void Platform_draw_rectangle(float x, float y, float w, float h, uint32_t color)
 void Platform_draw_rectangle_lines(float x, float y, float w, float h, uint32_t color)
 {
 	DrawRectangleLines(x, y, w, h, U32_TO_COLOR(color));
+}
+
+void Platform_text(const char *text, float x, float y, uint32_t font_size, uint32_t color)
+{
+	uint32_t default_font_size = 10;
+	if (font_size < default_font_size) font_size = default_font_size;
+	float spacing = (float)font_size / default_font_size;
+
+	DrawTextEx(font, text, (Vector2){ .x = x, .y = y }, font_size, spacing, U32_TO_COLOR(color));
+	// DrawText(text, x, y, font_size, U32_TO_COLOR(color));
 }
 
 bool Platform_is_key_pressed(uint32_t key)

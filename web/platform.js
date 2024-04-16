@@ -86,6 +86,23 @@ export default class Platform {
 	}
 
 	/**
+	* @param {number} text_ptr 
+	* @param {number} x 
+	* @param {number} y 
+	* @param {number} font_size 
+	* @param {number} color 
+	* */
+	Platform_text(text_ptr, x, y, font_size, color) {
+		const color_hex = color_to_hex(color);
+		const text = cstr_by_ptr(this.buffer, text_ptr);
+		
+		this.ctx.strokeStyle = color_hex;
+		this.ctx.font = `${font_size}px Jersey10`;
+		y += 28;
+		this.ctx.strokeText(text, x, y);
+	}
+
+	/**
 	* @param {number} mem_usage 
 	* */
 	Platform_log_mem(mem_usage) {
