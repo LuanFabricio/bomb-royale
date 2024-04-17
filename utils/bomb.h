@@ -5,7 +5,12 @@
 #include "../quadtree.h"
 #include "./fire.h"
 
-static u32 Bomb_tick(QuadTree *root, BombArray *bombs, FireArray *fires)
+Point fire_center_top[MAX_FIRE_LINE] = {0};
+Point fire_center_left[MAX_FIRE_LINE] = {0};
+Point fire_center_right[MAX_FIRE_LINE] = {0};
+Point fire_center_bottom[MAX_FIRE_LINE] = {0};
+
+static void Bomb_tick(QuadTree *root, BombArray *bombs, FireArray *fires)
 {
 	for (u32 i = 0; i < bombs->size; i++) {
 		if (bombs->arr[i].bomb_item.tick_to_explode > 0) bombs->arr[i].bomb_item.tick_to_explode -= 1;
@@ -17,26 +22,26 @@ static u32 Bomb_tick(QuadTree *root, BombArray *bombs, FireArray *fires)
 			fires->arr[fires->size].fire_item.center = fire_aabb.center;
 			fires->arr[fires->size++].fire_item.tick_to_explode = FIRE_NORMAL_TICKS;
 
-			Point fire_center_top[MAX_FIRE_LINE] = {0};
-			Point fire_center_left[MAX_FIRE_LINE] = {0};
-			Point fire_center_right[MAX_FIRE_LINE] = {0};
-			Point fire_center_bottom[MAX_FIRE_LINE] = {0};
+			// Point fire_center_top[MAX_FIRE_LINE] = {0};
+			// Point fire_center_left[MAX_FIRE_LINE] = {0};
+			// Point fire_center_right[MAX_FIRE_LINE] = {0};
+			// Point fire_center_bottom[MAX_FIRE_LINE] = {0};
 
 			u8 fire_power = bombs->arr[i].fire_power;
 			for (u8 j = 0; j < fire_power; j++) {
 				fire_center_top[j] 	= fire_aabb.center;
-				fire_center_left[j] 	= fire_aabb.center;
-				fire_center_right[j]	= fire_aabb.center;
-				fire_center_bottom[j] 	= fire_aabb.center;
+			 	fire_center_left[j] 	= fire_aabb.center;
+			 	fire_center_right[j]	= fire_aabb.center;
+			 	fire_center_bottom[j] 	= fire_aabb.center;
 
 				Fire_calc_position(&fire_center_top[j], j, 2);
-				Fire_calc_position(&fire_center_left[j], j, 0);
-				Fire_calc_position(&fire_center_right[j], j, 1);
-				Fire_calc_position(&fire_center_bottom[j], j, 3);
+			 	Fire_calc_position(&fire_center_left[j], j, 0);
+			 	Fire_calc_position(&fire_center_right[j], j, 1);
+			 	Fire_calc_position(&fire_center_bottom[j], j, 3);
 
 			}
 
-			Point* directions_avaiable[] = {
+			Point* directions_avaiable[4] = {
 				fire_center_left, fire_center_right,
 				fire_center_top, fire_center_bottom,
 			};
@@ -55,7 +60,6 @@ static u32 Bomb_tick(QuadTree *root, BombArray *bombs, FireArray *fires)
 			--i;
 		}
 	}
-	return bombs->size;
 }
 
 #endif // BOMB_H_

@@ -42,7 +42,7 @@ static boolean Fire_handle_collision(FireArray* fires, QuadTree *root, AABB fire
 	return collide;
 }
 
-static u8 Fire_tick(FireArray *fires)
+static void Fire_tick(FireArray *fires)
 {
 	for (u8 i = 0; i < fires->size; i++) {
 		if (fires->arr[i].fire_item.tick_to_explode > 0) {
@@ -53,8 +53,6 @@ static u8 Fire_tick(FireArray *fires)
 			if (i > 0) i -= 1;
 		}
 	}
-
-	return fires->size;
 }
 
 #endif // FIRE_H_
