@@ -17,9 +17,9 @@ static Game game = {0};
 
 void game_loop()
 {
-	game.bombs.size = Bomb_tick(game.root, &game.bombs, &game.fires);
+	Bomb_tick(game.root, &game.bombs, &game.fires);
 
-	game.fires.size = Fire_tick(&game.fires);
+	Fire_tick(&game.fires);
 
 	boolean bomb_placed = Input_place_bomb(&game);
 
@@ -79,7 +79,7 @@ void game_loop()
 
 int main()
 {
-	game = GM_Limited_Bombs_init(); //GM_Default_init();
+	GM_Limited_Bombs_init(&game);
 	QuadTree_load_map(game.root, (Block*)level_bytes, size);
 
 	for (u8 i = 0; i < game.players_len; i++) {

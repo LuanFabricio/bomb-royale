@@ -5,12 +5,11 @@
 #include "../quadtree.h"
 #include "./default.h"
 
-static Game GM_Limited_Bombs_init()
+static void GM_Limited_Bombs_init(Game *game)
 {
-	Game game = GM_Default_init();
-	game.game_mode = GAMEMODE_LIMITED_BOMBS;
-	game.game_mode_details.limited_bombs.remaning_bombs = 3;
-	return game;
+	GM_Default_init(game);
+	game->game_mode = GAMEMODE_LIMITED_BOMBS;
+	game->game_mode_details.limited_bombs.remaning_bombs = 3;
 }
 
 static void GM_Limited_Bombs_on_tick(Game *game, boolean bomb_placed)
